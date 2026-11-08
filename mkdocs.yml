@@ -1,5 +1,5 @@
 site_name: "Hermes-Agent 源码教程"
-site_description: "从入门到精通 —— hermes-agent 系统架构与代码走读（独立教程仓库）"
+site_description: "从入门到精通 —— hermes-agent 系统架构与代码走读"
 docs_dir: "tutorial"
 site_dir: "site"
 theme:
@@ -35,9 +35,3 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - toc: {permalink: true}
-extra_javascript:
-  - javascripts/mathjax.js
-  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
-
-site_url: "https://jigangbo.github.io/hermes-agent-tutorial/"
-repo_url: "https://github.com/jigangbo/hermes-agent-tutorial"

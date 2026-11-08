@@ -1,6 +1,8 @@
 nav:
   - index.md
-  - 背景与导读: 00_*.md
+  - 背景与导读:
+      - 00_background_knowledge.md
+      - 00_reading_guide.md
   - 系统架构专题: 01_architecture
   - 核心门面层: 02_core
   - agent 核心循环: 03_agent
