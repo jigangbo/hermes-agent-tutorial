@@ -5,6 +5,7 @@ site_dir: "site"
 theme:
   name: material
   language: zh
+  font: false
   palette:
     - scheme: default
       primary: indigo
