@@ -1,0 +1,4 @@
+[submodule "source"]
+	path = source
+	url = git@github.com:NousResearch/hermes-agent.git
+	shallow = true

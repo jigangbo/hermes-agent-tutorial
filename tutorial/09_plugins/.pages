@@ -1,0 +1,6 @@
+nav:
+  - index.md
+  - boundary_lint.md
+  - bundled_plugins.md
+  - catalog.md
+  - plugin_api.md

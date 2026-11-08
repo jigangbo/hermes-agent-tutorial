@@ -1,0 +1,5 @@
+nav:
+  - index.md
+  - jobs.md
+  - kanban_dispatcher.md
+  - scheduler.md

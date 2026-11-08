@@ -1,0 +1,13 @@
+nav:
+  - index.md
+  - config_skins.md
+  - gateway_client.md
+  - kanban.md
+  - local_runtime.md
+  - observability.md
+  - repl_mixins.md
+  - slash_registry.md
+  - subcommands_core.md
+  - update_system.md
+  - web_routers.md
+  - web_server.md

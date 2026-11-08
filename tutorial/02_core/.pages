@@ -1,0 +1,12 @@
+nav:
+  - index.md
+  - bootstrap_logging.md
+  - cli.md
+  - hermes_constants.md
+  - hermes_state.md
+  - misc_root.md
+  - model_tools.md
+  - platform_acl.md
+  - run_agent.md
+  - toolsets.md
+  - utilities.md
