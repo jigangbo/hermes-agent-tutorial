@@ -1,8 +1,8 @@
 nav:
   - index.md
-  - desktop_features.md
-  - desktop_overview.md
-  - shared_infra.md
-  - ts_conventions.md
-  - ui_tui.md
-  - web_dashboard.md
+  - "15.1 Electron 桌面总览": desktop_overview.md
+  - "15.2 桌面特性": desktop_features.md
+  - "15.3 终端 TUI": ui_tui.md
+  - "15.4 Web 仪表盘": web_dashboard.md
+  - "15.5 共享基建": shared_infra.md
+  - "15.6 TS 工程约定": ts_conventions.md

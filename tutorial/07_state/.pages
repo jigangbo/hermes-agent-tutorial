@@ -1,9 +1,9 @@
 nav:
   - index.md
-  - compression_state.md
-  - facade.md
-  - locks_guards.md
-  - misc_state.md
-  - search_maintenance.md
-  - sessions_messages.md
-  - wal_mutations.md
+  - "07.1 门面与共享": facade.md
+  - "07.2 WAL 与 mutation 回执": wal_mutations.md
+  - "07.3 会话与消息": sessions_messages.md
+  - "07.4 压缩谱系": compression_state.md
+  - "07.5 锁与守卫": locks_guards.md
+  - "07.6 检索与维护": search_maintenance.md
+  - "07.7 杂项收尾": misc_state.md

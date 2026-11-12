@@ -1,8 +1,8 @@
 nav:
   - index.md
-  - big_picture.md
-  - caching_invariants.md
-  - security_model.md
-  - state_model.md
-  - tool_system.md
-  - turn_lifecycle.md
+  - "01.1 全局架构总览": big_picture.md
+  - "01.2 一次对话的完整生命周期": turn_lifecycle.md
+  - "01.3 提示词缓存不变量": caching_invariants.md
+  - "01.4 状态与存储模型": state_model.md
+  - "01.5 工具系统全景": tool_system.md
+  - "01.6 安全边界模型": security_model.md

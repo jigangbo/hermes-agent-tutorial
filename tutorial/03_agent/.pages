@@ -1,23 +1,23 @@
 nav:
   - index.md
-  - auxiliary_clients.md
-  - codex_runtime.md
-  - compression.md
-  - conversation_loop.md
-  - credentials_rate.md
-  - delegation_subagents.md
-  - errors_resilience.md
-  - memory_learning.md
-  - model_metadata.md
-  - model_providers.md
-  - multimodal_media.md
-  - onboarding_sessions.md
-  - platform_misc.md
-  - prompt_caching.md
-  - relay_moa.md
-  - skills_runtime.md
-  - streaming_response.md
-  - system_prompt.md
-  - tool_execution.md
-  - turn_facade.md
-  - turn_pipeline.md
+  - "03.1 主循环心脏": conversation_loop.md
+  - "03.2 turn 阶段管线": turn_pipeline.md
+  - "03.3 准入门面": turn_facade.md
+  - "03.4 系统提示词": system_prompt.md
+  - "03.5 模型提供方与传输": model_providers.md
+  - "03.6 Codex 运行时": codex_runtime.md
+  - "03.7 模型元数据": model_metadata.md
+  - "03.8 辅助 LLM 客户端": auxiliary_clients.md
+  - "03.9 凭据与限速": credentials_rate.md
+  - "03.10 上下文压缩": compression.md
+  - "03.11 提示词缓存规划": prompt_caching.md
+  - "03.12 记忆与学习": memory_learning.md
+  - "03.13 技能运行时": skills_runtime.md
+  - "03.14 流式与响应": streaming_response.md
+  - "03.15 工具执行": tool_execution.md
+  - "03.16 委派与子代理": delegation_subagents.md
+  - "03.17 会话与新手引导": onboarding_sessions.md
+  - "03.18 错误与韧性": errors_resilience.md
+  - "03.19 多模态与媒体": multimodal_media.md
+  - "03.20 relay 与 MoA": relay_moa.md
+  - "03.21 平台杂项": platform_misc.md

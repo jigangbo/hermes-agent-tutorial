@@ -1,4 +1,4 @@
 nav:
   - index.md
-  - environments.md
-  - pinning_policy.md
+  - "11.1 环境与代": environments.md
+  - "11.2 钉版政策": pinning_policy.md

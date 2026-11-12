@@ -1,4 +1,4 @@
 nav:
   - index.md
-  - curator.md
-  - skill_format.md
+  - "12.1 技能格式": skill_format.md
+  - "12.2 策展人": curator.md

@@ -1,22 +1,22 @@
 nav:
   - index.md
-  - 背景与导读:
-      - 00_background_knowledge.md
-      - 00_reading_guide.md
-  - 系统架构专题: 01_architecture
-  - 核心门面层: 02_core
-  - agent 核心循环: 03_agent
-  - 工具系统: 04_tools
-  - 消息网关: 05_gateway
-  - 命令行层: 06_cli
-  - 状态持久化: 07_state
-  - TUI 网关: 08_tui_gateway
-  - 插件系统: 09_plugins
-  - 定时任务: 10_cron
-  - 包管理环境: 11_pm
-  - 技能系统: 12_skills
-  - 平台事实层: 13_hermes_platform
-  - ACP 适配器: 14_acp_adapter
-  - TypeScript 端: 15_typescript
-  - 开发实践: 16_dev_guide
-  - 进度跟踪: TODO.md
+  - "00 · 背景与导读":
+      - "00.1 背景知识": 00_background_knowledge.md
+      - "00.2 阅读指南": 00_reading_guide.md
+  - "01 · 系统架构专题": 01_architecture
+  - "02 · 核心门面层": 02_core
+  - "03 · agent 核心循环": 03_agent
+  - "04 · 工具系统": 04_tools
+  - "05 · 消息网关": 05_gateway
+  - "06 · 命令行层": 06_cli
+  - "07 · 状态持久化": 07_state
+  - "08 · TUI 网关": 08_tui_gateway
+  - "09 · 插件系统": 09_plugins
+  - "10 · 定时任务": 10_cron
+  - "11 · 包管理环境": 11_pm
+  - "12 · 技能系统": 12_skills
+  - "13 · 平台事实层": 13_hermes_platform
+  - "14 · ACP 适配器": 14_acp_adapter
+  - "15 · TypeScript 端": 15_typescript
+  - "16 · 开发实践": 16_dev_guide
+  - "附录 · 进度跟踪": TODO.md

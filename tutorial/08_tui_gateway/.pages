@@ -1,6 +1,6 @@
 nav:
   - index.md
-  - contracts.md
-  - methods_slash.md
-  - process_model.md
-  - rpc_transport.md
+  - "08.1 进程模型": process_model.md
+  - "08.2 JSON-RPC 传输": rpc_transport.md
+  - "08.3 wire 契约": contracts.md
+  - "08.4 方法面与 slash": methods_slash.md

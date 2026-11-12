@@ -1,5 +1,5 @@
 nav:
   - index.md
-  - jobs.md
-  - kanban_dispatcher.md
-  - scheduler.md
+  - "10.1 调度器": scheduler.md
+  - "10.2 任务定义与不变量": jobs.md
+  - "10.3 蓝图与看板派发": kanban_dispatcher.md

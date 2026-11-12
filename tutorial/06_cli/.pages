@@ -1,13 +1,13 @@
 nav:
   - index.md
-  - config_skins.md
-  - gateway_client.md
-  - kanban.md
-  - local_runtime.md
-  - observability.md
-  - repl_mixins.md
-  - slash_registry.md
-  - subcommands_core.md
-  - update_system.md
-  - web_routers.md
-  - web_server.md
+  - "06.1 REPL 与 mixin": repl_mixins.md
+  - "06.2 slash 注册表": slash_registry.md
+  - "06.3 配置与皮肤": config_skins.md
+  - "06.4 子命令全集": subcommands_core.md
+  - "06.5 web_routers 与仪表盘认证": web_routers.md
+  - "06.6 可观测性": observability.md
+  - "06.7 本地运行时与代理": local_runtime.md
+  - "06.8 kanban 看板": kanban.md
+  - "06.9 web 服务": web_server.md
+  - "06.10 更新系统": update_system.md
+  - "06.11 网关客户端与 profiles": gateway_client.md

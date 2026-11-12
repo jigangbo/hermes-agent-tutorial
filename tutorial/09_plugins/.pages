@@ -1,6 +1,6 @@
 nav:
   - index.md
-  - boundary_lint.md
-  - bundled_plugins.md
-  - catalog.md
-  - plugin_api.md
+  - "09.1 已发布插件 API": plugin_api.md
+  - "09.2 边界治理": boundary_lint.md
+  - "09.3 插件目录准入": catalog.md
+  - "09.4 内置插件清单": bundled_plugins.md
