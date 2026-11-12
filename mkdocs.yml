@@ -28,6 +28,8 @@ plugins:
       lang: [zh, en]
       separator: '[\s\u200b\-]'
   - awesome-pages
+extra_css:
+  - stylesheets/custom.css
 markdown_extensions:
   - tables
   - pymdownx.highlight: {anchor_linenums: true}

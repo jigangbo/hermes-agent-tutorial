@@ -1,0 +1,39 @@
+/* ============================================================
+   布局优化：左侧目录贴最左 · 右侧大纲贴最右 · 中间内容自适应拉宽
+   作用范围：桌面宽度（≥76.25em，即侧边栏可见的断点）
+   ============================================================ */
+
+@media screen and (min-width: 76.25em) {
+  /* 解除 mkdocs-material 的版心限制（默认 max-width ≈ 1342px 居中），
+     页眉 / 主体 / 页脚全部铺满视口 */
+  .md-grid {
+    max-width: none;
+  }
+
+  /* 左侧目录贴最左、右侧大纲贴最右：留一点点边距避免贴死像素 */
+  .md-sidebar--primary {
+    padding-left: 0.4rem;
+  }
+  .md-sidebar--secondary {
+    padding-right: 0.4rem;
+  }
+
+  /* 中间内容随视口自适应展开，适当加大左右留白保证可读性 */
+  .md-content__inner {
+    margin-inline: 1.4rem;
+  }
+
+  /* 宽屏下代码块、表格铺开更舒展 */
+  .md-typeset .md-typeset__scrollwrap,
+  .md-typeset pre > code,
+  .md-typeset table:not([class]) {
+    width: 100%;
+  }
+}
+
+/* 侧边栏内部滚动条略窄，避免占位 */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar__scrollwrap::-webkit-scrollbar {
+    width: 4px;
+  }
+}
