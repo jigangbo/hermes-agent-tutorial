@@ -1,14 +1,15 @@
+title: 第 6 章 工具系统：注册、审批与执行
 nav:
   - index.md
-  - "04.1 注册表与发现": registry.md
-  - "04.2 审批与安全": approval_safety.md
-  - "04.3 文件与终端": file_terminal.md
-  - "04.4 网页与浏览器": web_browser.md
-  - "04.5 GUI 自动化与桌面": computer_use.md
-  - "04.6 MCP 客户端": mcp.md
-  - "04.7 子代理委派工具": delegation_tools.md
-  - "04.8 服务连接器": connectors.md
-  - "04.9 执行环境": environments.md
-  - "04.10 技能与记忆工具": skills_memory.md
-  - "04.11 语音与媒体": voice_media.md
-  - "04.12 消息与定时任务工具": messaging_cron.md
+  - "`registry.md` — 注册表与发现": registry.md
+  - "`approval_safety.md` — 审批与安全": approval_safety.md
+  - "`file_terminal.md` — 文件与终端": file_terminal.md
+  - "`web_browser.md` — 网页与浏览器": web_browser.md
+  - "`computer_use.md` — GUI 自动化与桌面": computer_use.md
+  - "`mcp.md` — MCP 客户端": mcp.md
+  - "`delegation_tools.md` — 子代理委派工具": delegation_tools.md
+  - "`connectors.md` — 服务连接器": connectors.md
+  - "`environments.md` — 执行环境": environments.md
+  - "`skills_memory.md` — 技能与记忆工具": skills_memory.md
+  - "`voice_media.md` — 语音与媒体": voice_media.md
+  - "`messaging_cron.md` — 消息与定时任务工具": messaging_cron.md

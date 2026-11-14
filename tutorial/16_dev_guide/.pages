@@ -1,6 +1,7 @@
+title: 第 18 章 开发实践：环境、测试与贡献
 nav:
   - index.md
-  - "16.1 环境搭建": env_setup.md
-  - "16.2 测试体系": testing.md
-  - "16.3 代码健康门禁": code_health.md
-  - "16.4 贡献准则": contribution.md
+  - "`env_setup.md` — 环境搭建": env_setup.md
+  - "`testing.md` — 测试体系": testing.md
+  - "`code_health.md` — 代码健康门禁": code_health.md
+  - "`contribution.md` — 贡献准则": contribution.md

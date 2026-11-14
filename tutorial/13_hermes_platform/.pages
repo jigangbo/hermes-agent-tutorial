@@ -1,3 +1,4 @@
+title: 第 16 章 平台事实层：主机事实与解析器
 nav:
   - index.md
-  - "13.1 主机事实与解析器": facts_resolvers.md
+  - "`facts_resolvers.md` — 主机事实与解析器": facts_resolvers.md

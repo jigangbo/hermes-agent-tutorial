@@ -1,9 +1,10 @@
+title: 第 7 章 状态持久化：SQLite 与 mutation 回执
 nav:
   - index.md
-  - "07.1 门面与共享": facade.md
-  - "07.2 WAL 与 mutation 回执": wal_mutations.md
-  - "07.3 会话与消息": sessions_messages.md
-  - "07.4 压缩谱系": compression_state.md
-  - "07.5 锁与守卫": locks_guards.md
-  - "07.6 检索与维护": search_maintenance.md
-  - "07.7 杂项收尾": misc_state.md
+  - "`facade.md` — 门面与共享": facade.md
+  - "`wal_mutations.md` — WAL 与 mutation 回执": wal_mutations.md
+  - "`sessions_messages.md` — 会话与消息": sessions_messages.md
+  - "`compression_state.md` — 压缩谱系": compression_state.md
+  - "`locks_guards.md` — 锁与守卫": locks_guards.md
+  - "`search_maintenance.md` — 检索与维护": search_maintenance.md
+  - "`misc_state.md` — 杂项收尾": misc_state.md

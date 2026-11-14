@@ -1,12 +1,13 @@
+title: 第 4 章 核心门面层：根目录门面与 siblings
 nav:
   - index.md
-  - "02.1 run_agent 门面": run_agent.md
-  - "02.2 model_tools 工具编排": model_tools.md
-  - "02.3 toolsets 工具集": toolsets.md
-  - "02.4 cli REPL 门面": cli.md
-  - "02.5 hermes_state 状态门面": hermes_state.md
-  - "02.6 常量与 profile 路径": hermes_constants.md
-  - "02.7 引导与日志": bootstrap_logging.md
-  - "02.8 目录 ACL 与看门狗": platform_acl.md
-  - "02.9 工具函数集": utilities.md
-  - "02.10 杂项门面": misc_root.md
+  - "`run_agent.md` — run_agent 门面": run_agent.md
+  - "`model_tools.md` — model_tools 工具编排": model_tools.md
+  - "`toolsets.md` — toolsets 工具集": toolsets.md
+  - "`cli.md` — cli REPL 门面": cli.md
+  - "`hermes_state.md` — hermes_state 状态门面": hermes_state.md
+  - "`hermes_constants.md` — 常量与 profile 路径": hermes_constants.md
+  - "`bootstrap_logging.md` — 引导与日志": bootstrap_logging.md
+  - "`platform_acl.md` — 目录 ACL 与看门狗": platform_acl.md
+  - "`utilities.md` — 工具函数集": utilities.md
+  - "`misc_root.md` — 杂项门面": misc_root.md

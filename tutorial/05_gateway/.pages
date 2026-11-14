@@ -1,11 +1,12 @@
+title: 第 8 章 消息网关：平台适配与流式回传
 nav:
   - index.md
-  - "05.1 网关入口 run": run.md
-  - "05.2 消息全链路": message_flow.md
-  - "05.3 turn 机制": turn_machinery.md
-  - "05.4 会话权威": sessions_authority.md
-  - "05.5 适配器框架": platforms_framework.md
-  - "05.6 平台适配器插件": platform_adapters.md
-  - "05.7 内置 HTTP 平台": builtin_platforms.md
-  - "05.8 relay 通道": relay.md
-  - "05.9 流式回传": streaming.md
+  - "`run.md` — 网关入口 run": run.md
+  - "`message_flow.md` — 消息全链路": message_flow.md
+  - "`turn_machinery.md` — turn 机制": turn_machinery.md
+  - "`sessions_authority.md` — 会话权威": sessions_authority.md
+  - "`platforms_framework.md` — 适配器框架": platforms_framework.md
+  - "`platform_adapters.md` — 平台适配器插件": platform_adapters.md
+  - "`builtin_platforms.md` — 内置 HTTP 平台": builtin_platforms.md
+  - "`relay.md` — relay 通道": relay.md
+  - "`streaming.md` — 流式回传": streaming.md

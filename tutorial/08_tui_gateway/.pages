@@ -1,6 +1,7 @@
+title: 第 10 章 TUI 网关：JSON-RPC 契约
 nav:
   - index.md
-  - "08.1 进程模型": process_model.md
-  - "08.2 JSON-RPC 传输": rpc_transport.md
-  - "08.3 wire 契约": contracts.md
-  - "08.4 方法面与 slash": methods_slash.md
+  - "`process_model.md` — 进程模型": process_model.md
+  - "`rpc_transport.md` — JSON-RPC 传输": rpc_transport.md
+  - "`contracts.md` — wire 契约": contracts.md
+  - "`methods_slash.md` — 方法面与 slash": methods_slash.md

@@ -37,3 +37,48 @@
     width: 4px;
   }
 }
+
+/* ============================================================
+   文末上一页/下一页卡片按钮（由 javascripts/pager.js 注入）
+   ============================================================ */
+.dsh-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.4rem;
+}
+.dsh-pager__btn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.4rem;
+  color: var(--md-default-fg-color);
+}
+.dsh-pager__btn--next {
+  margin-left: auto;
+  text-align: right;
+}
+.dsh-pager__btn:hover {
+  border-color: var(--md-accent-fg-color);
+  color: var(--md-accent-fg-color);
+}
+.dsh-pager__dir {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--md-default-fg-color--light);
+}
+.dsh-pager__title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dsh-pager__btn--off {
+  opacity: 0.35;
+  pointer-events: none;
+}

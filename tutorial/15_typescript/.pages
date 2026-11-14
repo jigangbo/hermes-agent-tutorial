@@ -1,8 +1,9 @@
+title: 第 11 章 TypeScript 端：桌面、TUI 与仪表盘
 nav:
   - index.md
-  - "15.1 Electron 桌面总览": desktop_overview.md
-  - "15.2 桌面特性": desktop_features.md
-  - "15.3 终端 TUI": ui_tui.md
-  - "15.4 Web 仪表盘": web_dashboard.md
-  - "15.5 共享基建": shared_infra.md
-  - "15.6 TS 工程约定": ts_conventions.md
+  - "`desktop_overview.md` — Electron 桌面总览": desktop_overview.md
+  - "`desktop_features.md` — 桌面特性": desktop_features.md
+  - "`ui_tui.md` — 终端 TUI": ui_tui.md
+  - "`web_dashboard.md` — Web 仪表盘": web_dashboard.md
+  - "`shared_infra.md` — 共享基建": shared_infra.md
+  - "`ts_conventions.md` — TS 工程约定": ts_conventions.md

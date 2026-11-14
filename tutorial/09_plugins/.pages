@@ -1,6 +1,7 @@
+title: 第 12 章 插件系统：五类插件与目录准入
 nav:
   - index.md
-  - "09.1 已发布插件 API": plugin_api.md
-  - "09.2 边界治理": boundary_lint.md
-  - "09.3 插件目录准入": catalog.md
-  - "09.4 内置插件清单": bundled_plugins.md
+  - "`plugin_api.md` — 已发布插件 API": plugin_api.md
+  - "`boundary_lint.md` — 边界治理": boundary_lint.md
+  - "`catalog.md` — 插件目录准入": catalog.md
+  - "`bundled_plugins.md` — 内置插件清单": bundled_plugins.md

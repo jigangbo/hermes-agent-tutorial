@@ -1,13 +1,14 @@
+title: 第 9 章 命令行层：REPL、slash 与子命令
 nav:
   - index.md
-  - "06.1 REPL 与 mixin": repl_mixins.md
-  - "06.2 slash 注册表": slash_registry.md
-  - "06.3 配置与皮肤": config_skins.md
-  - "06.4 子命令全集": subcommands_core.md
-  - "06.5 web_routers 与仪表盘认证": web_routers.md
-  - "06.6 可观测性": observability.md
-  - "06.7 本地运行时与代理": local_runtime.md
-  - "06.8 kanban 看板": kanban.md
-  - "06.9 web 服务": web_server.md
-  - "06.10 更新系统": update_system.md
-  - "06.11 网关客户端与 profiles": gateway_client.md
+  - "`repl_mixins.md` — REPL 与 mixin": repl_mixins.md
+  - "`slash_registry.md` — slash 注册表": slash_registry.md
+  - "`config_skins.md` — 配置与皮肤": config_skins.md
+  - "`subcommands_core.md` — 子命令全集": subcommands_core.md
+  - "`web_routers.md` — web 路由与仪表盘认证": web_routers.md
+  - "`observability.md` — 可观测性": observability.md
+  - "`local_runtime.md` — 本地运行时与代理": local_runtime.md
+  - "`kanban.md` — kanban 看板": kanban.md
+  - "`web_server.md` — web 服务": web_server.md
+  - "`update_system.md` — 更新系统": update_system.md
+  - "`gateway_client.md` — 网关客户端与 profiles": gateway_client.md

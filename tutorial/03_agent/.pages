@@ -1,23 +1,24 @@
+title: 第 5 章 agent 核心循环：turn 循环与模型交互
 nav:
   - index.md
-  - "03.1 主循环心脏": conversation_loop.md
-  - "03.2 turn 阶段管线": turn_pipeline.md
-  - "03.3 准入门面": turn_facade.md
-  - "03.4 系统提示词": system_prompt.md
-  - "03.5 模型提供方与传输": model_providers.md
-  - "03.6 Codex 运行时": codex_runtime.md
-  - "03.7 模型元数据": model_metadata.md
-  - "03.8 辅助 LLM 客户端": auxiliary_clients.md
-  - "03.9 凭据与限速": credentials_rate.md
-  - "03.10 上下文压缩": compression.md
-  - "03.11 提示词缓存规划": prompt_caching.md
-  - "03.12 记忆与学习": memory_learning.md
-  - "03.13 技能运行时": skills_runtime.md
-  - "03.14 流式与响应": streaming_response.md
-  - "03.15 工具执行": tool_execution.md
-  - "03.16 委派与子代理": delegation_subagents.md
-  - "03.17 会话与新手引导": onboarding_sessions.md
-  - "03.18 错误与韧性": errors_resilience.md
-  - "03.19 多模态与媒体": multimodal_media.md
-  - "03.20 relay 与 MoA": relay_moa.md
-  - "03.21 平台杂项": platform_misc.md
+  - "`conversation_loop.md` — 主循环心脏": conversation_loop.md
+  - "`turn_pipeline.md` — turn 阶段管线": turn_pipeline.md
+  - "`turn_facade.md` — 准入门面": turn_facade.md
+  - "`system_prompt.md` — 系统提示词": system_prompt.md
+  - "`model_providers.md` — 模型提供方与传输": model_providers.md
+  - "`codex_runtime.md` — Codex 运行时": codex_runtime.md
+  - "`model_metadata.md` — 模型元数据": model_metadata.md
+  - "`auxiliary_clients.md` — 辅助 LLM 客户端": auxiliary_clients.md
+  - "`credentials_rate.md` — 凭据与限速": credentials_rate.md
+  - "`compression.md` — 上下文压缩": compression.md
+  - "`prompt_caching.md` — 提示词缓存规划": prompt_caching.md
+  - "`memory_learning.md` — 记忆与学习": memory_learning.md
+  - "`skills_runtime.md` — 技能运行时": skills_runtime.md
+  - "`streaming_response.md` — 流式与响应": streaming_response.md
+  - "`tool_execution.md` — 工具执行": tool_execution.md
+  - "`delegation_subagents.md` — 委派与子代理": delegation_subagents.md
+  - "`onboarding_sessions.md` — 会话与新手引导": onboarding_sessions.md
+  - "`errors_resilience.md` — 错误与韧性": errors_resilience.md
+  - "`multimodal_media.md` — 多模态与媒体": multimodal_media.md
+  - "`relay_moa.md` — relay 与 MoA": relay_moa.md
+  - "`platform_misc.md` — 平台杂项": platform_misc.md

@@ -70,28 +70,30 @@
 | 流式回传 | `gateway/stream_consumer.py` | [streaming](05_gateway/streaming.md) |
 | 状态落盘 | `hermes_state*.py` | [state_model](01_architecture/state_model.md) · [07_state](07_state/index.md) |
 
-## 模块索引
+## 模块索引（书籍式目录）
 
-| 目录 | 内容 | 文档数 |
-|------|------|--------|
-| [00 背景与导读](00_reading_guide.md) | 领域背景、术语词典、三条阅读路径 | 2 |
-| [01 系统架构专题](01_architecture/index.md) | 全局架构/turn 生命周期/缓存不变量/状态模型/工具系统/安全模型 | 7 |
-| [02 核心门面层](02_core/index.md) | run_agent、model_tools、toolsets、cli、hermes_state 等根目录门面 | 11 |
-| [03 agent 核心循环](03_agent/index.md) | 主循环、turn 管线、系统提示词、模型层、压缩、记忆、委派… | 21 |
-| [04 工具系统](04_tools/index.md) | 注册表、审批安全、文件终端、浏览器、MCP、委派、语音媒体… | 14 |
-| [05 消息网关](05_gateway/index.md) | GatewayRunner、消息流、平台适配器、流式、turn 机制 | 10 |
-| [06 命令行层](06_cli/index.md) | REPL mixin、slash 注册表、配置、子命令、web_routers、更新 | 12 |
-| [07 状态持久化](07_state/index.md) | WAL、mutation 回执、会话消息、锁、检索维护 | 8 |
-| [08 TUI 网关](08_tui_gateway/index.md) | 进程模型、JSON-RPC 契约、slash 流 | 5 |
-| [09 插件系统](09_plugins/index.md) | 5 类插件、插件 API、目录准入、内置插件 | 5 |
-| [10 定时任务](10_cron/index.md) | 调度器、任务定义、看板派发 | 4 |
-| [11 包管理环境](11_pm/index.md) | PM 环境、钉版策略 | 3 |
-| [12 技能系统](12_skills/index.md) | 技能格式、策展人 | 3 |
-| [13 平台事实层](13_hermes_platform/index.md) | 主机事实、无副作用解析器 | 2 |
-| [14 ACP 适配器](14_acp_adapter/index.md) | 编辑器协议接入 | 2 |
-| [15 TypeScript 端](15_typescript/index.md) | Desktop、ui-tui、web 仪表盘、共享契约 | 7 |
-| [16 开发实践](16_dev_guide/index.md) | 环境搭建、测试、代码健康门禁、贡献准则 | 5 |
+全书五篇十八章，按侧边栏顺序即为阅读顺序；文末的「上一页 / 下一页」按钮可连续翻页。
 
+| 篇 | 章 | 内容 | 文档数 |
+|----|-----|------|--------|
+| 第一篇 入门篇 | 第 1 章 | [背景知识：读懂 Hermes 的领域基础](00_background_knowledge.md) | 单篇 |
+| | 第 2 章 | [阅读指南：三条学习路径](00_reading_guide.md) | 单篇 |
+| | 第 3 章 | [系统架构专题：全局与不变量](01_architecture/index.md) | 7 |
+| 第二篇 核心篇 | 第 4 章 | [核心门面层：根目录门面与 siblings](02_core/index.md) | 11 |
+| | 第 5 章 | [agent 核心循环：turn 循环与模型交互](03_agent/index.md) | 22 |
+| | 第 6 章 | [工具系统：注册、审批与执行](04_tools/index.md) | 13 |
+| | 第 7 章 | [状态持久化：SQLite 与 mutation 回执](07_state/index.md) | 8 |
+| 第三篇 通道篇 | 第 8 章 | [消息网关：平台适配与流式回传](05_gateway/index.md) | 10 |
+| | 第 9 章 | [命令行层：REPL、slash 与子命令](06_cli/index.md) | 12 |
+| | 第 10 章 | [TUI 网关：JSON-RPC 契约](08_tui_gateway/index.md) | 5 |
+| | 第 11 章 | [TypeScript 端：桌面、TUI 与仪表盘](15_typescript/index.md) | 7 |
+| 第四篇 扩展篇 | 第 12 章 | [插件系统：五类插件与目录准入](09_plugins/index.md) | 5 |
+| | 第 13 章 | [技能系统：格式与策展人](12_skills/index.md) | 3 |
+| | 第 14 章 | [定时任务：调度器与不变量](10_cron/index.md) | 4 |
+| | 第 15 章 | [包管理环境：PM 与钉版政策](11_pm/index.md) | 3 |
+| | 第 16 章 | [平台事实层：主机事实与解析器](13_hermes_platform/index.md) | 2 |
+| | 第 17 章 | [ACP 适配器：编辑器协议](14_acp_adapter/index.md) | 2 |
+| 第五篇 精通篇 | 第 18 章 | [开发实践：环境、测试与贡献](16_dev_guide/index.md) | 5 |
 ## 这套教程能带你练到什么
 
 - **架构能力**：门面+兄弟拆分、进程模型与多租户作用域、生成式跨语言契约 —— 都是大仓库演进的实战模式；

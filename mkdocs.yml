@@ -30,6 +30,9 @@ plugins:
       lang: [zh, en]
       separator: '[\s\u200b\-]'
   - awesome-pages
+extra_javascript:
+  - javascripts/pager.js
+
 extra_css:
   - stylesheets/custom.css
 markdown_extensions:

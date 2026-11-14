@@ -1,5 +1,6 @@
+title: 第 14 章 定时任务：调度器与不变量
 nav:
   - index.md
-  - "10.1 调度器": scheduler.md
-  - "10.2 任务定义与不变量": jobs.md
-  - "10.3 蓝图与看板派发": kanban_dispatcher.md
+  - "`scheduler.md` — 调度器": scheduler.md
+  - "`jobs.md` — 任务定义与不变量": jobs.md
+  - "`kanban_dispatcher.md` — 蓝图与看板派发": kanban_dispatcher.md
