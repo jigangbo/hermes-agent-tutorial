@@ -1,0 +1,5973 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="从入门到精通 —— hermes-agent 系统架构与代码走读">
+      
+      
+      
+        <link rel="canonical" href="https://jigangbo.github.io/hermes-agent-tutorial/03_agent/onboarding_sessions/">
+      
+      
+        <link rel="prev" href="../delegation_subagents/">
+      
+      
+        <link rel="next" href="../errors_resilience/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>`onboarding_sessions.md` — 会话与新手引导 - Hermes-Agent 源码教程</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#onboarding_sessionsmd-first-run" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Hermes-Agent 源码教程" class="md-header__button md-logo" aria-label="Hermes-Agent 源码教程" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hermes-Agent 源码教程
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              `onboarding_sessions.md` — 会话与新手引导
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jigangbo/hermes-agent-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Hermes-Agent 源码教程" class="md-nav__button md-logo" aria-label="Hermes-Agent 源码教程" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Hermes-Agent 源码教程
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jigangbo/hermes-agent-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes-Agent 源码教程 — 从入门到精通
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一篇 入门篇：背景与全局架构
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第一篇 入门篇：背景与全局架构
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00_background_knowledge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 1 章 背景知识：读懂 Hermes 的领域基础
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00_reading_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 2 章 阅读指南：三条学习路径
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../01_architecture/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 3 章 系统架构专题：全局与不变量
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 3 章 系统架构专题：全局与不变量
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/big_picture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `big_picture.md` — 全局架构总览
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/turn_lifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `turn_lifecycle.md` — 一次对话的完整生命周期
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/caching_invariants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `caching_invariants.md` — 提示词缓存不变量
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/state_model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `state_model.md` — 状态与存储模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/tool_system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `tool_system.md` — 工具系统全景
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/security_model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `security_model.md` — 安全边界模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二篇 核心篇：agent 引擎、工具与状态
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第二篇 核心篇：agent 引擎、工具与状态
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../02_core/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 4 章 核心门面层：根目录门面与 siblings
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 4 章 核心门面层：根目录门面与 siblings
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/run_agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `run_agent.md` — run_agent 门面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/model_tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `model_tools.md` — model_tools 工具编排
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/toolsets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `toolsets.md` — toolsets 工具集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `cli.md` — cli REPL 门面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/hermes_state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `hermes_state.md` — hermes_state 状态门面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/hermes_constants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `hermes_constants.md` — 常量与 profile 路径
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/bootstrap_logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `bootstrap_logging.md` — 引导与日志
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/platform_acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `platform_acl.md` — 目录 ACL 与看门狗
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/utilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `utilities.md` — 工具函数集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/misc_root/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `misc_root.md` — 杂项门面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 5 章 agent 核心循环：turn 循环与模型交互
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 5 章 agent 核心循环：turn 循环与模型交互
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conversation_loop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `conversation_loop.md` — 主循环心脏
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../turn_pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `turn_pipeline.md` — turn 阶段管线
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../turn_facade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `turn_facade.md` — 准入门面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system_prompt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `system_prompt.md` — 系统提示词
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model_providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `model_providers.md` — 模型提供方与传输
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../codex_runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `codex_runtime.md` — Codex 运行时
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model_metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `model_metadata.md` — 模型元数据
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../auxiliary_clients/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `auxiliary_clients.md` — 辅助 LLM 客户端
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../credentials_rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `credentials_rate.md` — 凭据与限速
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `compression.md` — 上下文压缩
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompt_caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `prompt_caching.md` — 提示词缓存规划
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../memory_learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `memory_learning.md` — 记忆与学习
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../skills_runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `skills_runtime.md` — 技能运行时
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streaming_response/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `streaming_response.md` — 流式与响应
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool_execution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `tool_execution.md` — 工具执行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delegation_subagents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `delegation_subagents.md` — 委派与子代理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `onboarding_sessions.md` — 会话与新手引导
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `onboarding_sessions.md` — 会话与新手引导
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件概览
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码走读
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="关键代码走读">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-onboardingseenflag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 一次性提示:onboarding.seen.&lt;flag&gt; 与"任务优先"条款
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-first-run-beats-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. first-run 状态机:BEATS 与 apply()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 运行记录存取与工具集折入
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 转录持久化:去重标记与临时脚手架过滤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 活动时钟:单写路径、代数计数与限频心跳
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 来源标签、客户端环境与持久化回执
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 子目录提示:缓存安全注入的教科书范例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-served-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 表面切换、编码姿态与 served model
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心类/函数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        本组文件清单
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        与其他模块的关系
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors_resilience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `errors_resilience.md` — 错误与韧性
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multimodal_media/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `multimodal_media.md` — 多模态与媒体
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../relay_moa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `relay_moa.md` — relay 与 MoA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../platform_misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `platform_misc.md` — 平台杂项
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../04_tools/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 6 章 工具系统：注册、审批与执行
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 6 章 工具系统：注册、审批与执行
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `registry.md` — 注册表与发现
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/approval_safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `approval_safety.md` — 审批与安全
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/file_terminal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `file_terminal.md` — 文件与终端
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/web_browser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `web_browser.md` — 网页与浏览器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/computer_use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `computer_use.md` — GUI 自动化与桌面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `mcp.md` — MCP 客户端
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/delegation_tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `delegation_tools.md` — 子代理委派工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/connectors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `connectors.md` — 服务连接器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/environments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `environments.md` — 执行环境
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/skills_memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `skills_memory.md` — 技能与记忆工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/voice_media/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `voice_media.md` — 语音与媒体
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/messaging_cron/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `messaging_cron.md` — 消息与定时任务工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../07_state/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 7 章 状态持久化：SQLite 与 mutation 回执
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 7 章 状态持久化：SQLite 与 mutation 回执
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/facade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `facade.md` — 门面与共享
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/wal_mutations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `wal_mutations.md` — WAL 与 mutation 回执
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/sessions_messages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `sessions_messages.md` — 会话与消息
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/compression_state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `compression_state.md` — 压缩谱系
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/locks_guards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `locks_guards.md` — 锁与守卫
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/search_maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `search_maintenance.md` — 检索与维护
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/misc_state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `misc_state.md` — 杂项收尾
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三篇 通道篇：网关、CLI 与多端界面
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第三篇 通道篇：网关、CLI 与多端界面
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../05_gateway/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 8 章 消息网关：平台适配与流式回传
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 8 章 消息网关：平台适配与流式回传
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/run/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `run.md` — 网关入口 run
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/message_flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `message_flow.md` — 消息全链路
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/turn_machinery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `turn_machinery.md` — turn 机制
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/sessions_authority/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `sessions_authority.md` — 会话权威
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/platforms_framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `platforms_framework.md` — 适配器框架
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/platform_adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `platform_adapters.md` — 平台适配器插件
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/builtin_platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `builtin_platforms.md` — 内置 HTTP 平台
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/relay/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `relay.md` — relay 通道
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/streaming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `streaming.md` — 流式回传
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../06_cli/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 9 章 命令行层：REPL、slash 与子命令
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 9 章 命令行层：REPL、slash 与子命令
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/repl_mixins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `repl_mixins.md` — REPL 与 mixin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/slash_registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `slash_registry.md` — slash 注册表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/config_skins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `config_skins.md` — 配置与皮肤
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/subcommands_core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `subcommands_core.md` — 子命令全集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/web_routers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `web_routers.md` — web 路由与仪表盘认证
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `observability.md` — 可观测性
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/local_runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `local_runtime.md` — 本地运行时与代理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/kanban/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `kanban.md` — kanban 看板
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/web_server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `web_server.md` — web 服务
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/update_system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `update_system.md` — 更新系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/gateway_client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `gateway_client.md` — 网关客户端与 profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../08_tui_gateway/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 10 章 TUI 网关：JSON-RPC 契约
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 10 章 TUI 网关：JSON-RPC 契约
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_tui_gateway/process_model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `process_model.md` — 进程模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_tui_gateway/rpc_transport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `rpc_transport.md` — JSON-RPC 传输
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_tui_gateway/contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `contracts.md` — wire 契约
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_tui_gateway/methods_slash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `methods_slash.md` — 方法面与 slash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../15_typescript/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 11 章 TypeScript 端：桌面、TUI 与仪表盘
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 11 章 TypeScript 端：桌面、TUI 与仪表盘
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/desktop_overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `desktop_overview.md` — Electron 桌面总览
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/desktop_features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `desktop_features.md` — 桌面特性
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/ui_tui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `ui_tui.md` — 终端 TUI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/web_dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `web_dashboard.md` — Web 仪表盘
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/shared_infra/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `shared_infra.md` — 共享基建
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/ts_conventions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `ts_conventions.md` — TS 工程约定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第四篇 扩展篇：插件、技能与周边子系统
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第四篇 扩展篇：插件、技能与周边子系统
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../09_plugins/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 12 章 插件系统：五类插件与目录准入
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 12 章 插件系统：五类插件与目录准入
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_plugins/plugin_api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `plugin_api.md` — 已发布插件 API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_plugins/boundary_lint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `boundary_lint.md` — 边界治理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_plugins/catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `catalog.md` — 插件目录准入
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_plugins/bundled_plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `bundled_plugins.md` — 内置插件清单
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../12_skills/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 13 章 技能系统：格式与策展人
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 13 章 技能系统：格式与策展人
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12_skills/skill_format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `skill_format.md` — 技能格式
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12_skills/curator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `curator.md` — 策展人
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../10_cron/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 14 章 定时任务：调度器与不变量
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 14 章 定时任务：调度器与不变量
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_cron/scheduler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `scheduler.md` — 调度器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_cron/jobs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `jobs.md` — 任务定义与不变量
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_cron/kanban_dispatcher/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `kanban_dispatcher.md` — 蓝图与看板派发
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../11_pm/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 15 章 包管理环境：PM 与钉版政策
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 15 章 包管理环境：PM 与钉版政策
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11_pm/environments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `environments.md` — 环境与代
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11_pm/pinning_policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `pinning_policy.md` — 钉版政策
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../13_hermes_platform/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 16 章 平台事实层：主机事实与解析器
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 16 章 平台事实层：主机事实与解析器
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13_hermes_platform/facts_resolvers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `facts_resolvers.md` — 主机事实与解析器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../14_acp_adapter/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 17 章 ACP 适配器：编辑器协议
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 17 章 ACP 适配器：编辑器协议
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14_acp_adapter/protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `protocol.md` — ACP 协议接入
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第五篇 精通篇：开发实践
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第五篇 精通篇：开发实践
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../16_dev_guide/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 18 章 开发实践：环境、测试与贡献
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 18 章 开发实践：环境、测试与贡献
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../16_dev_guide/env_setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `env_setup.md` — 环境搭建
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../16_dev_guide/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `testing.md` — 测试体系
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../16_dev_guide/code_health/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `code_health.md` — 代码健康门禁
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../16_dev_guide/contribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `contribution.md` — 贡献准则
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../TODO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    附录 · 进度跟踪
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件概览
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码走读
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="关键代码走读">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-onboardingseenflag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 一次性提示:onboarding.seen.&lt;flag&gt; 与"任务优先"条款
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-first-run-beats-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. first-run 状态机:BEATS 与 apply()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 运行记录存取与工具集折入
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 转录持久化:去重标记与临时脚手架过滤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 活动时钟:单写路径、代数计数与限频心跳
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 来源标签、客户端环境与持久化回执
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 子目录提示:缓存安全注入的教科书范例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-served-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 表面切换、编码姿态与 served model
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心类/函数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        本组文件清单
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        与其他模块的关系
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="onboarding_sessionsmd-first-run">onboarding_sessions.md — 会话生命周期与新手引导:一次性提示、first-run 状态机、转录持久化与缓存安全注入<a class="headerlink" href="#onboarding_sessionsmd-first-run" title="Permanent link">&para;</a></h1>
+<h2 id="_1">文件概览<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>本篇讲 agent 侧"会话"的一整圈外围:会话<strong>从哪里来</strong>(来源标签、客户端环境)、<strong>活没活着</strong>
+(活动时钟、看门狗喂食)、<strong>怎么落盘</strong>(SQLite 转录持久化、持久化回执)、<strong>怎么换皮</strong>(表面切换、
+编码姿态),以及两条新手引导路径——CLI/网关上的一次性 first-touch 提示,和桌面端 first-run 的
+"一次聊天跑完所有节拍"状态机。主旋律是那条最老的不变量:<strong>不要动已缓存的前缀</strong>——范例是
+<code>subdirectory_hints.py</code>:新发现的上下文文件"骑"在工具结果上注入,系统提示词一字不动。</p>
+<p>first-run 引导是<strong>纯数据状态机</strong>:<code>onboarding_flow.py</code> 定义 7 个节拍(name → theme → layout →
+connectors → plugins → tour → build),<code>apply(record, event, facts)</code> 返回"新记录 + 模型可见结果
++ 提醒键";<code>onboarding_record.py</code> 把记录存进会话行的 <code>sessions.model_config</code>(不加 schema);
+<code>onboarding_session.py</code> 折入 <code>onboarding</code> 工具集,<code>onboarding_text.py</code> 出文案,
+<code>onboarding_facts.py</code> 提供无需同意的机器事实,<code>onboarding_first_tasks.py</code> 是 build 节拍的任务
+目录。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>桌面 first-run 引导(一次聊天,setup_beat 工具驱动):
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  start(db, session_id, facts)  →  写 onboarding_run + set_run(True)
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  聊天循环:
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    脚本开场(问候+name 卡,onboarding_prelude)
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    模型调 setup_beat(beat=...) → apply(record, Shown/Answered/Wrote/...)
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        → Step(record, result, reminder)            onboarding_flow
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    普通工具结果也结算节拍:set_theme/manage_connections/gui_tour → Applied
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        (observe_tool_result, onboarding_record.py:161)
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  build 卡的答案被结算 → phase=COMPLETE → 安装级 flag 关闭
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>行数</th>
+<th>角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent/onboarding.py</code></td>
+<td>251</td>
+<td>一次性 first-touch 提示(busy/tool-progress/OpenClaw 残留/首条消息 note)+ first-run 入口</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_facts.py</code></td>
+<td>35</td>
+<td>无需同意的"类 A"机器事实(OS/arch/机器类型/NVIDIA 平台/locale)</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_first_tasks.py</code></td>
+<td>328</td>
+<td>build 节拍的首任务目录(<code>FirstTask</code> + 资格门)</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_flow.py</code></td>
+<td>429</td>
+<td>节拍与运行记录的纯状态机:<code>apply()</code> 是唯一事件归约器</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_record.py</code></td>
+<td>178</td>
+<td>运行记录存取:一次数据库事务里的 load→apply→save</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_session.py</code></td>
+<td>92</td>
+<td>会话级拼装:工具集折入、脚本开场、per-turn note</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_text.py</code></td>
+<td>392</td>
+<td>全部文案:多语言问候、隐藏首 turn 的开场提示词、提醒渲染</td>
+</tr>
+<tr>
+<td><code>agent/session_source.py</code></td>
+<td>72</td>
+<td>来源词表:<code>tui/desktop/cli/oneshot/...</code> 与"有人在看"判定</td>
+</tr>
+<tr>
+<td><code>agent/session_client_env.py</code></td>
+<td>170</td>
+<td>shell 客户端冻结进会话的白名单环境(ContextVar 绑定)</td>
+</tr>
+<tr>
+<td><code>agent/session_activity.py</code></td>
+<td>149</td>
+<td>活动观察契约:时间戳 + 有界描述 + provenance 枚举 + 睡眠修正</td>
+</tr>
+<tr>
+<td><code>agent/activity_tracking.py</code></td>
+<td>149</td>
+<td><code>ActivityTrackingMixin</code>:<code>_touch_activity</code> 单写路径 + 限频持久化</td>
+</tr>
+<tr>
+<td><code>agent/session_persistence.py</code></td>
+<td>607</td>
+<td><code>SessionPersistenceMixin</code>:SQLite 转录落盘、去重标记、脚手架过滤</td>
+</tr>
+<tr>
+<td><code>agent/persisted_turn_receipt.py</code></td>
+<td>65</td>
+<td><code>message.complete.persisted_turn</code> 回执:按 row_id 绑定流式回复</td>
+</tr>
+<tr>
+<td><code>agent/history_commentary.py</code></td>
+<td>181</td>
+<td>Codex commentary 显示投影(REST/网关历史共用,源数据不动)</td>
+</tr>
+<tr>
+<td><code>agent/coding_context.py</code></td>
+<td>592</td>
+<td>"我们在写代码吗"的唯一裁决点:冻结的 RuntimeMode 姿态</td>
+</tr>
+<tr>
+<td><code>agent/subdirectory_hints.py</code></td>
+<td>326</td>
+<td>渐进子目录提示:首访目录把 AGENTS.md 骑上工具结果</td>
+</tr>
+<tr>
+<td><code>agent/surface_switch.py</code></td>
+<td>140</td>
+<td>表面切换不重建提示词:当前表面指导走 per-turn note</td>
+</tr>
+<tr>
+<td><code>agent/served_model.py</code></td>
+<td>68</td>
+<td>路由代理的"实际服务模型"捕获(httpx 响应钩子)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_2">关键代码走读<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="1-onboardingseenflag">1. 一次性提示:<code>onboarding.seen.&lt;flag&gt;</code> 与"任务优先"条款<a class="headerlink" href="#1-onboardingseenflag" title="Permanent link">&para;</a></h3>
+<p>CLI/网关上的引导极轻:每个提示只在<strong>每个安装</strong>出现一次,旗标存 <code>config.yaml</code> 的 <code>onboarding.seen</code> 下;
+文件刻意小而无依赖。首条消息的 note 有个关键条款——绝不让引导语吃掉真实任务:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># agent/onboarding.py:131-136 + 138-143(节选)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">TASK_FIRST_CLAUSE</span> <span class="o">=</span> <span class="p">(</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="s2">"If this message is itself a real request or task, DO THE TASK FIRST -- call "</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="s2">"whatever tools it needs -- and only then, in the closing sentences of that same "</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="s2">"reply, do what this note asks. Never let this note replace or skip work the user "</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="s2">"actually asked for. "</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># PLAIN_INTRO_NOTE = "[System note: ... " + TASK_FIRST_CLAUSE + "briefly introduce yourself ...]"</span>
+</code></pre></div>
+<p><code>first_contact_turn_note()</code>(onboarding.py:146)决定首条消息挂哪份 note:<code>profile_build: ask</code> 且
+旗标未落 → profile-build 指令(先问后查、绝不静默读已连接账号),否则普通自我介绍;会话历史非空、
+安装里已有旧会话、first-run 进行中三者任一即返回 <code>None</code>。<code>mark_seen()</code>(onboarding.py:210)用
+<code>atomic_config_write</code> 原子落旗标,失败静默(引导失败不该毁掉真实回复)。</p>
+<h3 id="2-first-run-beats-apply">2. first-run 状态机:<code>BEATS</code> 与 <code>apply()</code><a class="headerlink" href="#2-first-run-beats-apply" title="Permanent link">&para;</a></h3>
+<p>整个引导是数据:节拍表 + 事件归约。<code>Beat</code> 自带 <code>when</code> 门(这台机器要不要跳过)、<code>values</code>(可接受
+的答案 id)、<code>after</code>(结算后的提醒键);<code>_settle_unfit</code> 建记录时就把不适用节拍标成 <code>skipped</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># agent/onboarding_flow.py:174-187(节选)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">BEATS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Beat</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">Beat</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">facts</span><span class="p">,</span> <span class="n">picks</span><span class="p">:</span> <span class="p">{},</span> <span class="n">picks</span><span class="o">=</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,),</span> <span class="n">value</span><span class="o">=</span><span class="s2">"name"</span><span class="p">),</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">Beat</span><span class="p">(</span><span class="s2">"theme"</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">facts</span><span class="p">,</span> <span class="n">picks</span><span class="p">:</span> <span class="p">{</span><span class="s2">"picker"</span><span class="p">:</span> <span class="s2">"accent"</span><span class="p">},</span> <span class="n">picks</span><span class="o">=</span><span class="p">(</span><span class="s2">"accent"</span><span class="p">,</span> <span class="s2">"mode"</span><span class="p">),</span> <span class="n">value</span><span class="o">=</span><span class="s2">"accent"</span><span class="p">),</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">Beat</span><span class="p">(</span><span class="s2">"layout"</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">facts</span><span class="p">,</span> <span class="n">picks</span><span class="p">:</span> <span class="p">{</span><span class="s2">"options"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">LAYOUT_OPTIONS</span><span class="p">)},</span> <span class="n">picks</span><span class="o">=</span><span class="p">(</span><span class="s2">"layout"</span><span class="p">,),</span> <span class="n">value</span><span class="o">=</span><span class="s2">"layout"</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>         <span class="n">values</span><span class="o">=</span><span class="k">lambda</span> <span class="n">facts</span><span class="p">,</span> <span class="n">picks</span><span class="p">:</span> <span class="n">_option_ids</span><span class="p">(</span><span class="n">LAYOUT_OPTIONS</span><span class="p">)),</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">Beat</span><span class="p">(</span><span class="s2">"connectors"</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">facts</span><span class="p">,</span> <span class="n">picks</span><span class="p">:</span> <span class="p">{},</span> <span class="n">picks</span><span class="o">=</span><span class="p">(</span><span class="s2">"connected"</span><span class="p">,</span> <span class="s2">"newly_connected"</span><span class="p">)),</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">Beat</span><span class="p">(</span><span class="s2">"plugins"</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">when</span><span class="o">=</span><span class="k">lambda</span> <span class="n">facts</span><span class="p">,</span> <span class="n">picks</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">facts</span><span class="o">.</span><span class="n">plugins</span><span class="p">)),</span>   <span class="c1"># 这台机器没装就不显示</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">Beat</span><span class="p">(</span><span class="s2">"tour"</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">when</span><span class="o">=</span><span class="k">lambda</span> <span class="n">facts</span><span class="p">,</span> <span class="n">picks</span><span class="p">:</span> <span class="n">facts</span><span class="o">.</span><span class="n">tours</span><span class="p">),</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">Beat</span><span class="p">(</span><span class="s2">"build"</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"build"</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">build_values</span><span class="p">),</span>                <span class="c1"># 首个任务卡,结算即完成</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">)</span>
+</code></pre></div>
+<p><code>apply()</code>(onboarding_flow.py:412)是唯一入口:深拷贝记录、按事件类型分派给 <code>_HANDLERS</code> 表、build
+结算即完成。事件 9 种——<code>Shown</code>(出卡片)、<code>Answered</code>(卡上作答)、<code>Wrote</code>(改发消息)、<code>TimedOut</code>
+(卡片超时 300s)、<code>Recorded</code>(值用文字给出)、<code>Skipped</code>、<code>End</code>(Skip setup)、<code>Done</code>、<code>Applied</code>
+(普通工具结果结算节拍);文件<strong>纯</strong>,无 I/O 无时钟。<code>valid_answer()</code>(onboarding_flow.py:271)防
+越权:答案只能携带本节拍的 pick 键、id 必须来自卡片自己的选项,<code>label</code> 只是显示文本、绝不入库。</p>
+<h3 id="3">3. 运行记录存取与工具集折入<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<p>记录存在 <code>sessions.model_config</code> 的 <code>onboarding_run</code> 键下——不加 schema,压缩轮转顺带携带。
+<code>advance</code> 是 <code>start</code> 之后的唯一写者,用回调式事务把读和写放进同一临界区(Skip setup 与卡片作答
+并发时,旧副本不会覆盖新状态):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># agent/onboarding_record.py:47-70(节选)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">_transition</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Step</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="sd">"""Apply *event* and write the result in one database transaction at the compression tip ..."""</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">holder</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">current</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>      <span class="c1"># 事务内回调:load → apply → save</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="n">holder</span><span class="p">[</span><span class="s2">"was_active"</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_active</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="n">holder</span><span class="p">[</span><span class="s2">"step"</span><span class="p">]</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">Facts</span><span class="o">.</span><span class="n">from_stored</span><span class="p">(</span><span class="n">current</span><span class="p">[</span><span class="s2">"facts"</span><span class="p">]),</span> <span class="n">now</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        <span class="k">return</span> <span class="n">holder</span><span class="p">[</span><span class="s2">"step"</span><span class="p">]</span><span class="o">.</span><span class="n">record</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">db</span><span class="o">.</span><span class="n">update_conversation_model_config_value</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">KEY</span><span class="p">,</span> <span class="n">update</span><span class="p">)</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">step</span> <span class="o">=</span> <span class="n">holder</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"step"</span><span class="p">)</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="c1"># Told before the flag write, which can fail: the record already says the run ended.</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="k">if</span> <span class="n">step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">holder</span><span class="p">[</span><span class="s2">"was_active"</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_active</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">record</span><span class="p">):</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>        <span class="n">_announce</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"run_id"</span><span class="p">),</span> <span class="n">session_id</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="s2">"ended_by"</span><span class="p">])</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="k">if</span> <span class="n">step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_active</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">record</span><span class="p">)</span> <span class="ow">and</span> <span class="n">active_session_id</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>        <span class="n">_close_install_flag</span><span class="p">()</span>
+</code></pre></div>
+<p>两个次序细节:结束公告在<strong>写安装旗标之前</strong>发(旗标写可能失败,而记录已宣布结束);旗标只在
+<strong>没有别的 run 还开着</strong>时关闭——旗标属于活着的 run,旧聊天不能替它收尾。<code>delete_chat()</code>
+(onboarding_record.py:125)则先关旗标再删、删除失败把旗标设回,并把每份压缩副本逐行写上
+<code>End("deleted")</code>。</p>
+<p><code>setup_beat</code> 什么时候进工具数组?答案是 <strong>agent 构建时定死</strong>——工具数组是缓存前缀的一部分,
+run 结束绝不撤掉(已结束的 run 会对 <code>setup_beat</code> 回绝,直到会话重建):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># agent/onboarding_session.py:39-48(节选)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">onboarding_chat_toolsets</span><span class="p">(</span><span class="n">enabled</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="sd">"""...Keyed on the record existing, never on the run being open: the tool array is part of</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="sd">    the cached prefix; a run that ends must not change it mid-conversation."""</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">agent.onboarding_record</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="k">if</span> <span class="n">keeps_toolsets</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span> <span class="ow">or</span> <span class="n">db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>        <span class="k">return</span> <span class="n">enabled</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">tip</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_compression_tip</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span> <span class="ow">or</span> <span class="n">session_id</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="k">return</span> <span class="n">with_onboarding</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span> <span class="k">if</span> <span class="n">load</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">tip</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">enabled</span>
+</code></pre></div>
+<p>判据是"<strong>记录存在</strong>"而非"run 还开着"——每 turn 都解析工具集的会话权威,若按 run 开关切换,
+run 结束那一 turn 会原地丢弃缓存前缀。脚本开场 <code>onboarding_prelude()</code>(onboarding_session.py:58)
+只在 name 节拍从未展示时产出问候 + 第一次 <code>setup_beat</code> 调用,重启时问候已在历史里就不再说。</p>
+<h3 id="4">4. 转录持久化:去重标记与临时脚手架过滤<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<p><code>SessionPersistenceMixin</code> 把对话落 SQLite,两个契约值得背下来。"已落盘"标记必须挂在 <strong>dict 的键</strong>
+上而非 <code>id(msg)</code> 集合——<code>id()</code> 会把被释放 dict 的地址别名叫到新消息上;恢复用的临时脚手架<strong>绝不</strong>
+进持久转录,否则续会话会重放合成 turn 或破坏前缀缓存复用:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># agent/session_persistence.py:34-44 + 52-60(节选)</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">_EPHEMERAL_SCAFFOLDING_FLAGS</span> <span class="o">=</span> <span class="p">(</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="s2">"_empty_recovery_synthetic"</span><span class="p">,</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="s2">"_empty_terminal_sentinel"</span><span class="p">,</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="s2">"_thinking_prefill"</span><span class="p">,</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="s2">"_verification_stop_synthetic"</span><span class="p">,</span>  <span class="c1"># verify-on-stop nudge; the assistant candidate itself is NOT synthetic</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="s2">"_pre_verify_synthetic"</span><span class="p">,</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="s2">"_kanban_stop_synthetic"</span><span class="p">,</span>  <span class="c1"># kanban worker stop-guard</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="s2">"_dropped_toolcall_nudge"</span><span class="p">,</span>  <span class="c1"># internal retry instruction; must not replay as user context</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="p">)</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="c1"># `_DB_PERSISTED_MARKER` ... is the intrinsic "already written to SQLite" marker: an</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1"># id(msg) set can alias a freed dict's address onto a new message, a key on the dict cannot. ...</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="c1"># CONTRACT: the marker asserts the dict's CONTENT is durable as written — any in-place mutation</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="c1"># that must persist MUST pop it (turn_finalizer, context_compressor).</span>
+</code></pre></div>
+<p>落盘是<strong>文本投影</strong>:<code>_durable_content()</code>(session_persistence.py:122)把多模态信封压成摘要、
+图片 part 变成位置保真的 <code>[screenshot]</code>(带 <code>detail=</code> 的标记供 <code>image_replay</code> 重建原始 part)。
+图片字节本体没丢——会话权威把它们提交到 profile 的内容寻址 <code>native-inputs/&lt;sha256&gt;/</code>,行内写
+<code>[Image attached at: &lt;path&gt;]</code>,这是 image_replay 的前提。会话 id 是可能不可信的
+<code>X-Hermes-Session-Id</code>,<code>_safe_session_filename_component()</code>(session_persistence.py:63)清洗非法
+字符并加内容哈希防碰撞——导出/轨迹文件的路径安全层。</p>
+<h3 id="5">5. 活动时钟:单写路径、代数计数与限频心跳<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
+<p><code>ActivityTrackingMixin._touch_activity</code> 是活动戳的<strong>唯一</strong>写路径。在一个锁里同时推进 monotonic 代数
+和时间戳,让看门狗把"停滞观察"绑定到确切的 <code>(generation, timestamp)</code>,避免中断一个恰好在观察
+间隙恢复了的 turn:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># agent/activity_tracking.py:63-89(节选)</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">resolved_provenance</span> <span class="o">=</span> <span class="n">normalize_activity_provenance</span><span class="p">(</span><span class="n">provenance</span><span class="p">)</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">with</span> <span class="n">_activity_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_turn_liveness_activity_generation</span> <span class="o">=</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_turn_liveness_activity_generation"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_last_activity_ts</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_last_activity_desc</span> <span class="o">=</span> <span class="n">bound_activity_description</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_last_activity_provenance</span> <span class="o">=</span> <span class="n">resolved_provenance</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_turn_liveness_abort_claim</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># real progress invalidates a reserved abort claim</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"HERMES_KANBAN_TASK"</span><span class="p">):</span>     <span class="c1"># kanban 心跳桥(限频、best-effort、永不抛进循环)</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>        <span class="n">heartbeat_current_worker_from_env</span><span class="p">();</span> <span class="n">inject_new_comments_from_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># OUT-OF-BAND steer</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="k">if</span> <span class="n">force_persist</span> <span class="ow">or</span> <span class="n">is_terminal_compression_provenance</span><span class="p">(</span><span class="n">resolved_provenance</span><span class="p">):</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="c1"># ... deferring this write leaves the durable row advertising a compression that has already</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>    <span class="c1"># ended — the permanently "stuck" chat (#72039).</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>    <span class="n">reset_session_activity_persist_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="bp">self</span><span class="o">.</span><span class="n">_persist_session_activity_if_due</span><span class="p">()</span>
+</code></pre></div>
+<p><code>session_activity.py</code> 定义共享契约:描述钳 120 字符;provenance 是封闭名词枚举(默认 <code>unknown</code>,
+压缩写手带 <code>agent.compression*</code>);心跳下限 60s 是<strong>代码常量</strong>(不许任何配置把它变成高频写手)。
+<code>AwakeIdleMeter</code>(session_activity.py:121)修一个真实 bug:挂起的笔记本按 wall clock 算 idle,
+唤醒后第一拍会误杀健康 turn——<code>time.monotonic()</code> 睡眠时暂停,两钟之差就是睡掉的秒数。</p>
+<h3 id="6">6. 来源标签、客户端环境与持久化回执<a class="headerlink" href="#6" title="Permanent link">&para;</a></h3>
+<p><code>session_source.py</code> 是词表叶子(唯一依赖 stdlib-only):<code>tui/desktop</code> 是 UI 传输来源、<code>oneshot</code>
+让 <code>hermes chat -q</code> 在人工选择器里隐藏、<code>ATTENDED_SOURCES</code> 判定"turn 运行时有人在看":</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># agent/session_source.py:17-30</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">UI_TRANSPORT_SOURCES</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"tui"</span><span class="p">,</span> <span class="s2">"desktop"</span><span class="p">})</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">ONESHOT_SOURCE</span> <span class="o">=</span> <span class="s2">"oneshot"</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">CLI_FAMILY_SOURCES</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"cli"</span><span class="p">,</span> <span class="n">ONESHOT_SOURCE</span><span class="p">})</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">DAYBREAK_SOURCES</span> <span class="o">=</span> <span class="n">UI_TRANSPORT_SOURCES</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"cli"</span><span class="p">}</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">ATTENDED_SOURCES</span> <span class="o">=</span> <span class="n">UI_TRANSPORT_SOURCES</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"cli"</span><span class="p">,</span> <span class="s2">"acp"</span><span class="p">}</span>
+</code></pre></div>
+<p><code>session_client_env.py</code> 解决"一个网关进程服务所有会话"后的环境归属:客户端在 <code>session.create</code>
+时把<strong>白名单</strong>值(行为名 + 工具链名 + profile 配置的额外名)随会话冻结,绑到 ContextVar
+(<code>client_env_scope</code>),绝不写进网关的 <code>os.environ</code>。<code>session_env()</code> 读行为值、<code>toolchain_environ()</code>
+为工具子进程装配环境——本客户端没导出的工具链变量被<strong>显式 unset</strong>(一个客户端的 venv 不能经
+daemon 渗进另一客户端的会话),<code>_travels()</code> 还拦下命中密钥策略的 <code>NODE_</code> 前缀名;非 <code>local</code>
+客户端(Desktop)只保留不指名本主机的值。</p>
+<p><code>persisted_turn_receipt()</code> 为 <code>message.complete.persisted_turn</code> 事件产出本 turn 已提交行的地址;
+docstring 里的设计意图一句话:<strong>报告已提交的 row 地址,绝不做文本/时间戳搜索</strong>。回执分级:
+<code>row_ids</code>(部分)、<code>user_row_ids</code>(turn 里每条可见 user 行,支持 steer/redirect 多 prompt)、
+<code>final_assistant_row_id</code>,以及 <code>complete</code> 标志——要求前缀逐行匹配、无压缩、无重定向边界。
+<code>committed_row_id()</code>(persisted_turn_receipt.py:15)要求消息同时带 <code>_DB_PERSISTED_MARKER</code> 和正
+整数 <code>_row_id</code>——回执只认真正落盘的行;TUI/桌面据此把乐观气泡绑定到存储行,重启后也不错位。</p>
+<h3 id="7">7. 子目录提示:缓存安全注入的教科书范例<a class="headerlink" href="#7" title="Permanent link">&para;</a></h3>
+<p>最后深讲本篇样板戏。启动时 <code>prompt_builder.py</code> 只加载 CWD 的 AGENTS.md/CLAUDE.md;agent 通过
+工具调用走进子目录时,<code>SubdirectoryHintTracker</code> 在<strong>首次</strong>触及每个目录时把该目录的提示文件追加
+到工具结果上——上下文到达了,系统提示词一字未动:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># agent/subdirectory_hints.py:187-196</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">check_tool_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tool_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="sd">"""Return formatted hint text for newly visited directories, or None."""</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">agent.safe_worker_policy</span><span class="w"> </span><span class="kn">import</span> <span class="n">safe_worker_enabled</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="ow">or</span> <span class="n">safe_worker_enabled</span><span class="p">():</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>        <span class="k">return</span> <span class="kc">None</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_home_is_working_dir</span><span class="p">:</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>        <span class="k">return</span> <span class="kc">None</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="n">all_hints</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_directories</span><span class="p">(</span><span class="n">tool_name</span><span class="p">,</span> <span class="n">tool_args</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">h</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_hints_for_directory</span><span class="p">(</span><span class="n">d</span><span class="p">))]</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="k">return</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_hints</span><span class="p">)</span> <span class="k">if</span> <span class="n">all_hints</span> <span class="k">else</span> <span class="kc">None</span>
+</code></pre></div>
+<p>短函数下叠了四层防御,每层都有真实事故背书:<strong>路径仲裁</strong>(<code>_resolved_hint_target</code>,subdirectory_hints.py:40)
+——<code>read_text</code> 会跟随符号链接,仓库里一个 <code>sub/AGENTS.md -&gt; ~/.aws/credentials</code> 就能把树外
+文件注入工具结果,所以 resolve 后的目标必须留在工作目录内、通过规范读黑名单,黑名单查询失败
+<strong>fail-closed</strong> 拒载;<strong>家目录不是项目</strong>(subdirectory_hints.py:123)——无默认项目的桌面应用把
+cwd 解析到 <code>$HOME</code>,包含检查对整个 home 子树<strong>空洞地</strong>为真,所以 home/容器 home 直接禁用提示
+发现,会话领养真实项目后 <code>rebind_working_dir()</code> 再开;<strong>内容去重</strong>(subdirectory_hints.py:299-303)
+——同一文件经符号链接/硬链接/拷贝到达也只发一次,以 sha256 摘要去重;<strong>上限+警告</strong>
+(<code>_MAX_HINT_CHARS = 32_000</code>)——超限保留头尾、带路径标记让 agent 可 <code>read_file</code> 续读,并打
+WARNING(旧的 8k 静默截尾把 <code>apps/desktop/AGENTS.md</code> 切掉了几个月无人察觉)。</p>
+<p>目录提取同样讲究:<code>_nav_targets()</code> 用 shlex 分词只认 shell 段<strong>开头</strong>的 <code>cd</code>/<code>pushd</code> 操作数
+(<code>echo cd backend</code> 是散文不是导航);<code>_is_excluded</code> 与搜索探针共享 <code>SEARCH_PRUNE_DIR_NAMES</code>
+排除依赖/构建树;<code>enabled=False</code> 镜像 <code>skip_context_files</code>——启动时拒绝 AGENTS.md 注入的会话,
+后面也不许从工具结果偷渡回来(cron 转述精确 stdout 曾把它漏进聊天,#9441)。</p>
+<h3 id="8-served-model">8. 表面切换、编码姿态与 served model<a class="headerlink" href="#8-served-model" title="Permanent link">&para;</a></h3>
+<p><code>surface_switch.py</code> 处理 desktop↔TUI 换皮:重建系统提示词会让 220K 会话的缓存命中掉到 1%。
+方案是保留已存字节,把<strong>当前</strong>表面的指导装进一次性 turn note(骑 user 消息 sidecar <code>api_content</code>,
+字节稳定、后续 turn 原样重放),提示词本体等到下次重建边界(压缩)再收敛;<code>note_inert_pinned_tools()</code>
+还要点名本表面没构建的"惰性钉住工具"——移除它们才会真的 re-prefill,所以只能告诉模型"调了会
+失败"。<code>coding_context.py</code> 在会话初把"编码姿态"冻结为不可变 <code>RuntimeMode</code>:workspace 快照每会话
+探针一次,之后 <code>system_prompt_parts(workspace_block=...)</code> 重放同一份字节——同为缓存安全。
+<code>served_model.py</code> 补最后一块:LiteLLM 式代理把真实路由的部署放进响应头(<code>x-litellm-model-id</code>),
+OpenAI SDK 解析对象会丢头,所以捕获挂 httpx 响应钩子,值落 <code>agent.last_served_model</code>——None 表示
+本次响应没带头,值永不比产生它的请求活得久。<code>history_commentary.py</code> 同属"显示与存储分离"族:
+存储的 reasoning 原样保留供模型重放,公开转录文本只准用投影字段。</p>
+<hr />
+<h2 id="_3">核心类/函数<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>位置</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>first_contact_turn_note</code> / <code>mark_seen</code></td>
+<td>agent/onboarding.py:146/210</td>
+<td>首条消息一次性 note;旗标原子写</td>
+</tr>
+<tr>
+<td><code>Facts</code> / <code>new_record</code> / <code>apply</code> / <code>valid_answer</code></td>
+<td>agent/onboarding_flow.py:27/191/412/271</td>
+<td>类 A 事实;建记录;9 种事件归约;卡答案防越权</td>
+</tr>
+<tr>
+<td><code>start</code> / <code>advance</code> / <code>delete_chat</code> / <code>observe_tool_result</code></td>
+<td>agent/onboarding_record.py:87/99/125/161</td>
+<td>run 记录写/事务推进/删除聊天/工具结果结算节拍</td>
+</tr>
+<tr>
+<td><code>onboarding_chat_toolsets</code> / <code>onboarding_prelude</code> / <code>reminder</code></td>
+<td>agent/onboarding_session.py:39/58, onboarding_text.py</td>
+<td>缓存安全的工具集折入;脚本开场;提醒渲染</td>
+</tr>
+<tr>
+<td><code>ActivityProvenance</code> / <code>AwakeIdleMeter</code> / <code>_touch_activity</code></td>
+<td>agent/session_activity.py:24/121, activity_tracking.py:41</td>
+<td>来源枚举;睡眠修正;活动单写路径</td>
+</tr>
+<tr>
+<td><code>_is_ephemeral_scaffolding</code> / <code>durable_user_row_content</code> / <code>persisted_turn_receipt</code></td>
+<td>agent/session_persistence.py:52/94, persisted_turn_receipt.py:20</td>
+<td>脚手架过滤;持久行分野;行地址回执</td>
+</tr>
+<tr>
+<td><code>SubdirectoryHintTracker</code> / <code>check_tool_call</code></td>
+<td>agent/subdirectory_hints.py:136/187</td>
+<td>首访目录提示,骑工具结果注入</td>
+</tr>
+<tr>
+<td><code>stage_surface_switch_note</code> / <code>install_served_model_capture</code></td>
+<td>agent/surface_switch.py:103, served_model.py:35</td>
+<td>表面切换 note;代理真实路由模型捕获</td>
+</tr>
+<tr>
+<td><code>is_attended</code> / <code>session_source_for</code></td>
+<td>agent/session_source.py:61/39</td>
+<td>有人在看判定;来源标签解析</td>
+</tr>
+<tr>
+<td><code>client_env_scope</code> / <code>toolchain_environ</code></td>
+<td>agent/session_client_env.py:112/147</td>
+<td>会话冻结环境绑定;工具子进程环境</td>
+</tr>
+<tr>
+<td><code>RuntimeMode</code>(coding_context)</td>
+<td>agent/coding_context.py</td>
+<td>冻结的编码姿态(auto/focus/on/off)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">本组文件清单<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>主题</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent/onboarding.py</code></td>
+<td>引导</td>
+<td>一次性提示 + 首条消息 note + first-run 入口</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_facts.py</code></td>
+<td>引导</td>
+<td>类 A 机器事实,无需同意</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_first_tasks.py</code></td>
+<td>引导</td>
+<td>build 节拍首任务目录与资格门</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_flow.py</code></td>
+<td>引导</td>
+<td>节拍状态机(纯数据,9 种事件归约)</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_record.py</code></td>
+<td>引导</td>
+<td>run 记录存取(model_config 键 + 事务推进)</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_session.py</code></td>
+<td>引导</td>
+<td>工具集折入、脚本开场、per-turn note</td>
+</tr>
+<tr>
+<td><code>agent/onboarding_text.py</code></td>
+<td>引导</td>
+<td>多语言文案、开场提示词、提醒渲染</td>
+</tr>
+<tr>
+<td><code>agent/session_source.py</code></td>
+<td>会话</td>
+<td>来源词表 + attended 判定 + Daybreak 表面</td>
+</tr>
+<tr>
+<td><code>agent/session_client_env.py</code></td>
+<td>会话</td>
+<td>客户端环境冻结进会话(ContextVar)</td>
+</tr>
+<tr>
+<td><code>agent/session_activity.py</code></td>
+<td>会话</td>
+<td>活动观察契约 + 睡眠修正计时器</td>
+</tr>
+<tr>
+<td><code>agent/activity_tracking.py</code></td>
+<td>会话</td>
+<td><code>ActivityTrackingMixin</code>:活动单写路径</td>
+</tr>
+<tr>
+<td><code>agent/session_persistence.py</code></td>
+<td>持久化</td>
+<td><code>SessionPersistenceMixin</code>:SQLite 转录落盘</td>
+</tr>
+<tr>
+<td><code>agent/persisted_turn_receipt.py</code></td>
+<td>持久化</td>
+<td>turn 完成回执(row 地址绑定)</td>
+</tr>
+<tr>
+<td><code>agent/history_commentary.py</code></td>
+<td>持久化</td>
+<td>Codex commentary 显示投影(源数据不动)</td>
+</tr>
+<tr>
+<td><code>agent/coding_context.py</code></td>
+<td>姿态</td>
+<td>"我们在写代码吗"唯一裁决点</td>
+</tr>
+<tr>
+<td><code>agent/subdirectory_hints.py</code></td>
+<td>注入</td>
+<td>首访子目录提示(缓存安全范例)</td>
+</tr>
+<tr>
+<td><code>agent/surface_switch.py</code></td>
+<td>姿态</td>
+<td>表面切换不重建提示词</td>
+</tr>
+<tr>
+<td><code>agent/served_model.py</code></td>
+<td>模型</td>
+<td>路由代理真实服务模型捕获</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">与其他模块的关系<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>tools/</strong>:first-run 引导由 <code>tools/setup_beat_tool.py</code> 驱动;<code>set_theme_tool</code>、<code>gui_tour</code>、
+  <code>manage_connections</code> 的结果经 <code>observe_tool_result</code> 结算节拍;kanban 心跳桥在 <code>_touch_activity</code> 里。</li>
+<li><strong>hermes_state/</strong>:<code>sessions.model_config</code> 是 run 记录的家,<code>hermes_state_compression</code> 保证压缩轮转
+  携带它;<code>touch_session_activity</code>/<code>clear_session_activity_labels</code> 是活动投影落点。</li>
+<li><strong>gateway/</strong>:来源标签由 <code>gateway/session_context.get_session_env</code> 供给;run 结束公告发给每个窗口;
+  <code>gateway/session_finite</code> 参与 attended 判定;表面切换 note 由网关换皮触发。</li>
+<li><strong>hermes_cli/</strong>:<code>onboarding_run.set_run</code> 是安装级 flag 的唯一写者;<code>atomic_config_write</code> 支撑 <code>mark_seen</code>。</li>
+<li><strong>agent/其余</strong>:<code>_DB_PERSISTED_MARKER</code> 定义在 <code>context_compressor.py</code>;<code>_touch_activity</code> 由 turn 循环
+  与 MoA 扇出桥(<code>moa_loop._reference_liveness_hook</code>)喂食;<code>subdirectory_hints</code> 复用 <code>prompt_builder</code>
+  的读取/扫描/截断三件套与 <code>search_policy</code> 的排除目录。</li>
+<li><strong>hermes_platform</strong>:<code>onboarding_facts.read_facts</code> 全部取自 <code>hermes_platform.host.summary</code>;
+  <strong>apps/desktop</strong> 的多语言问候与桌面 first-run 文案必须逐字一致(注释互相钉住)。</li>
+</ul>
+<h2 id="_6">总结<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>这一组文件是"会话"这个名词的全部周边:出生(来源、客户端环境)、活着(活动时钟与回执)、落盘
+(去重标记 + 脚手架过滤的转录)、变脸(表面切换、编码姿态、代理后真实模型)和新生(两条引导
+路径)。三个手法值得带走:<strong>一次性状态用 install 级旗标 + 原子写</strong>,永不重复打扰;<strong>会话级可变
+物冻结进会话行</strong>(model_config、client_env),一进程多 profile 不串台;而最核心的——任何"中途
+想给模型加点上下文"的冲动都必须过缓存这道闸,subdirectory_hints 的四层防御、surface_switch 的
+turn note 通道、onboarding 工具集的"记录存在"判据,都是同一句话的不同拼法:<strong>新信息骑在
+user/tool 消息上,已缓存的前缀不动。</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../javascripts/pager.js"></script>
+      
+    
+  </body>
+</html>

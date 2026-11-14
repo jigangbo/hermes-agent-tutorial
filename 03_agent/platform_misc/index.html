@@ -1,0 +1,6321 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="从入门到精通 —— hermes-agent 系统架构与代码走读">
+      
+      
+      
+        <link rel="canonical" href="https://jigangbo.github.io/hermes-agent-tutorial/03_agent/platform_misc/">
+      
+      
+        <link rel="prev" href="../relay_moa/">
+      
+      
+        <link rel="next" href="../../04_tools/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>`platform_misc.md` — 平台杂项 - Hermes-Agent 源码教程</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#platform_miscmd-agent-i18nlsp" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Hermes-Agent 源码教程" class="md-header__button md-logo" aria-label="Hermes-Agent 源码教程" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hermes-Agent 源码教程
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              `platform_misc.md` — 平台杂项
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jigangbo/hermes-agent-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Hermes-Agent 源码教程" class="md-nav__button md-logo" aria-label="Hermes-Agent 源码教程" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Hermes-Agent 源码教程
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jigangbo/hermes-agent-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes-Agent 源码教程 — 从入门到精通
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一篇 入门篇：背景与全局架构
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第一篇 入门篇：背景与全局架构
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00_background_knowledge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 1 章 背景知识：读懂 Hermes 的领域基础
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00_reading_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 2 章 阅读指南：三条学习路径
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../01_architecture/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 3 章 系统架构专题：全局与不变量
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 3 章 系统架构专题：全局与不变量
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/big_picture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `big_picture.md` — 全局架构总览
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/turn_lifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `turn_lifecycle.md` — 一次对话的完整生命周期
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/caching_invariants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `caching_invariants.md` — 提示词缓存不变量
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/state_model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `state_model.md` — 状态与存储模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/tool_system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `tool_system.md` — 工具系统全景
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_architecture/security_model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `security_model.md` — 安全边界模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二篇 核心篇：agent 引擎、工具与状态
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第二篇 核心篇：agent 引擎、工具与状态
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../02_core/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 4 章 核心门面层：根目录门面与 siblings
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 4 章 核心门面层：根目录门面与 siblings
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/run_agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `run_agent.md` — run_agent 门面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/model_tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `model_tools.md` — model_tools 工具编排
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/toolsets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `toolsets.md` — toolsets 工具集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `cli.md` — cli REPL 门面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/hermes_state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `hermes_state.md` — hermes_state 状态门面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/hermes_constants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `hermes_constants.md` — 常量与 profile 路径
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/bootstrap_logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `bootstrap_logging.md` — 引导与日志
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/platform_acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `platform_acl.md` — 目录 ACL 与看门狗
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/utilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `utilities.md` — 工具函数集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_core/misc_root/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `misc_root.md` — 杂项门面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 5 章 agent 核心循环：turn 循环与模型交互
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 5 章 agent 核心循环：turn 循环与模型交互
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conversation_loop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `conversation_loop.md` — 主循环心脏
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../turn_pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `turn_pipeline.md` — turn 阶段管线
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../turn_facade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `turn_facade.md` — 准入门面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system_prompt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `system_prompt.md` — 系统提示词
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model_providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `model_providers.md` — 模型提供方与传输
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../codex_runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `codex_runtime.md` — Codex 运行时
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model_metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `model_metadata.md` — 模型元数据
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../auxiliary_clients/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `auxiliary_clients.md` — 辅助 LLM 客户端
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../credentials_rate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `credentials_rate.md` — 凭据与限速
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `compression.md` — 上下文压缩
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompt_caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `prompt_caching.md` — 提示词缓存规划
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../memory_learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `memory_learning.md` — 记忆与学习
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../skills_runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `skills_runtime.md` — 技能运行时
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streaming_response/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `streaming_response.md` — 流式与响应
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool_execution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `tool_execution.md` — 工具执行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delegation_subagents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `delegation_subagents.md` — 委派与子代理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../onboarding_sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `onboarding_sessions.md` — 会话与新手引导
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors_resilience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `errors_resilience.md` — 错误与韧性
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multimodal_media/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `multimodal_media.md` — 多模态与媒体
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../relay_moa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `relay_moa.md` — relay 与 MoA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `platform_misc.md` — 平台杂项
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `platform_misc.md` — 平台杂项
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件概览
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码走读
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="关键代码走读">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vault-model-blind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. vault 族(深讲):model-blind 的凭据保险库
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-secret_sources-proxy_sources-secret_scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 密钥来源链:secret_sources/ + proxy_sources/ + secret_scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-i18n" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. i18n 族:三层目录、每层可残缺
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-lsp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. lsp/ 集成(深讲):写后诊断的完整管线
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-pet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. pet/:桌宠是纯显示层
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-monitoring-emitfail-isolated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. monitoring/:微秒级 emit、fail-isolated 出口
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. verify 族:被动台账 + 有界停机闸
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 杂项 19 文件:每个都小而硬
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心类/函数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        本组文件清单
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        与其他模块的关系
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../04_tools/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 6 章 工具系统：注册、审批与执行
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 6 章 工具系统：注册、审批与执行
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `registry.md` — 注册表与发现
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/approval_safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `approval_safety.md` — 审批与安全
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/file_terminal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `file_terminal.md` — 文件与终端
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/web_browser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `web_browser.md` — 网页与浏览器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/computer_use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `computer_use.md` — GUI 自动化与桌面
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `mcp.md` — MCP 客户端
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/delegation_tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `delegation_tools.md` — 子代理委派工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/connectors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `connectors.md` — 服务连接器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/environments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `environments.md` — 执行环境
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/skills_memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `skills_memory.md` — 技能与记忆工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/voice_media/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `voice_media.md` — 语音与媒体
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_tools/messaging_cron/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `messaging_cron.md` — 消息与定时任务工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../07_state/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 7 章 状态持久化：SQLite 与 mutation 回执
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 7 章 状态持久化：SQLite 与 mutation 回执
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/facade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `facade.md` — 门面与共享
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/wal_mutations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `wal_mutations.md` — WAL 与 mutation 回执
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/sessions_messages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `sessions_messages.md` — 会话与消息
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/compression_state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `compression_state.md` — 压缩谱系
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/locks_guards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `locks_guards.md` — 锁与守卫
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/search_maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `search_maintenance.md` — 检索与维护
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_state/misc_state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `misc_state.md` — 杂项收尾
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三篇 通道篇：网关、CLI 与多端界面
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第三篇 通道篇：网关、CLI 与多端界面
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../05_gateway/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 8 章 消息网关：平台适配与流式回传
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 8 章 消息网关：平台适配与流式回传
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/run/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `run.md` — 网关入口 run
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/message_flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `message_flow.md` — 消息全链路
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/turn_machinery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `turn_machinery.md` — turn 机制
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/sessions_authority/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `sessions_authority.md` — 会话权威
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/platforms_framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `platforms_framework.md` — 适配器框架
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/platform_adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `platform_adapters.md` — 平台适配器插件
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/builtin_platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `builtin_platforms.md` — 内置 HTTP 平台
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/relay/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `relay.md` — relay 通道
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_gateway/streaming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `streaming.md` — 流式回传
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../06_cli/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 9 章 命令行层：REPL、slash 与子命令
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 9 章 命令行层：REPL、slash 与子命令
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/repl_mixins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `repl_mixins.md` — REPL 与 mixin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/slash_registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `slash_registry.md` — slash 注册表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/config_skins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `config_skins.md` — 配置与皮肤
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/subcommands_core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `subcommands_core.md` — 子命令全集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/web_routers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `web_routers.md` — web 路由与仪表盘认证
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `observability.md` — 可观测性
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/local_runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `local_runtime.md` — 本地运行时与代理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/kanban/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `kanban.md` — kanban 看板
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/web_server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `web_server.md` — web 服务
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/update_system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `update_system.md` — 更新系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_cli/gateway_client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `gateway_client.md` — 网关客户端与 profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../08_tui_gateway/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 10 章 TUI 网关：JSON-RPC 契约
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 10 章 TUI 网关：JSON-RPC 契约
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_tui_gateway/process_model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `process_model.md` — 进程模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_tui_gateway/rpc_transport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `rpc_transport.md` — JSON-RPC 传输
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_tui_gateway/contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `contracts.md` — wire 契约
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_tui_gateway/methods_slash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `methods_slash.md` — 方法面与 slash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../15_typescript/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 11 章 TypeScript 端：桌面、TUI 与仪表盘
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 11 章 TypeScript 端：桌面、TUI 与仪表盘
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/desktop_overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `desktop_overview.md` — Electron 桌面总览
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/desktop_features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `desktop_features.md` — 桌面特性
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/ui_tui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `ui_tui.md` — 终端 TUI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/web_dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `web_dashboard.md` — Web 仪表盘
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/shared_infra/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `shared_infra.md` — 共享基建
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15_typescript/ts_conventions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `ts_conventions.md` — TS 工程约定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第四篇 扩展篇：插件、技能与周边子系统
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第四篇 扩展篇：插件、技能与周边子系统
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../09_plugins/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 12 章 插件系统：五类插件与目录准入
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 12 章 插件系统：五类插件与目录准入
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_plugins/plugin_api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `plugin_api.md` — 已发布插件 API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_plugins/boundary_lint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `boundary_lint.md` — 边界治理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_plugins/catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `catalog.md` — 插件目录准入
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_plugins/bundled_plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `bundled_plugins.md` — 内置插件清单
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../12_skills/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 13 章 技能系统：格式与策展人
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 13 章 技能系统：格式与策展人
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12_skills/skill_format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `skill_format.md` — 技能格式
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12_skills/curator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `curator.md` — 策展人
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../10_cron/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 14 章 定时任务：调度器与不变量
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 14 章 定时任务：调度器与不变量
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_cron/scheduler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `scheduler.md` — 调度器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_cron/jobs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `jobs.md` — 任务定义与不变量
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_cron/kanban_dispatcher/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `kanban_dispatcher.md` — 蓝图与看板派发
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../11_pm/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 15 章 包管理环境：PM 与钉版政策
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 15 章 包管理环境：PM 与钉版政策
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11_pm/environments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `environments.md` — 环境与代
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11_pm/pinning_policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `pinning_policy.md` — 钉版政策
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../13_hermes_platform/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 16 章 平台事实层：主机事实与解析器
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 16 章 平台事实层：主机事实与解析器
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13_hermes_platform/facts_resolvers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `facts_resolvers.md` — 主机事实与解析器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../14_acp_adapter/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 17 章 ACP 适配器：编辑器协议
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 17 章 ACP 适配器：编辑器协议
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14_acp_adapter/protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `protocol.md` — ACP 协议接入
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第五篇 精通篇：开发实践
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第五篇 精通篇：开发实践
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../16_dev_guide/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 18 章 开发实践：环境、测试与贡献
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第 18 章 开发实践：环境、测试与贡献
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../16_dev_guide/env_setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `env_setup.md` — 环境搭建
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../16_dev_guide/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `testing.md` — 测试体系
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../16_dev_guide/code_health/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `code_health.md` — 代码健康门禁
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../16_dev_guide/contribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    `contribution.md` — 贡献准则
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../TODO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    附录 · 进度跟踪
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件概览
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码走读
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="关键代码走读">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vault-model-blind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. vault 族(深讲):model-blind 的凭据保险库
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-secret_sources-proxy_sources-secret_scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 密钥来源链:secret_sources/ + proxy_sources/ + secret_scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-i18n" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. i18n 族:三层目录、每层可残缺
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-lsp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. lsp/ 集成(深讲):写后诊断的完整管线
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-pet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. pet/:桌宠是纯显示层
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-monitoring-emitfail-isolated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. monitoring/:微秒级 emit、fail-isolated 出口
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. verify 族:被动台账 + 有界停机闸
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 杂项 19 文件:每个都小而硬
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心类/函数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        本组文件清单
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        与其他模块的关系
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="platform_miscmd-agent-i18nlsp">platform_misc.md — agent/ 其余一切:凭据保险库、密钥来源链、i18n、LSP、桌宠、监控、验证与杂项<a class="headerlink" href="#platform_miscmd-agent-i18nlsp" title="Permanent link">&para;</a></h1>
+<h2 id="_1">文件概览<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>这是 agent/ 的<strong>兜底篇</strong>:前面各篇讲完 turn 循环、压缩、模型、凭据池、记忆、媒体之后剩下的
+所有文件,按主题分成八组收拢。每组 2-5 句 + 表格;vault 族与 LSP 集成做深度走读。各组共享的
+底色还是那两条:<strong>密钥/机密数据绝不流入模型可见面</strong>(vault 是 model-blind 的、密钥来源只进
+环境、脱敏 fail-closed),<strong>注册表模式处处复用</strong>(vault 后端、secret 来源、locale 包全走
+<code>PluginContext.register_*</code>)。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>agent/ 的"平台层"全景:
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  凭据三链                         集成与体验                    守护与杂项
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  ┌──────────────────┐            ┌────────────────────┐        ┌──────────────────┐
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  │ secret_sources/ 7 │ 启动时     │ lsp/ 14 文件        │        │ monitoring/ 9 文件│
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  │ proxy_sources/ 2  │ 环境注入   │  写后诊断           │        │  fire-and-forget │
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  │ secret_scope      ├───────────&gt;│ pet/ 11 文件        │        │  OTLP 出口       │
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  │ vault 族 12 文件   │ 沙箱出口   │  桌宠(CLI/TUI/桌面) │       │ verify 族 7 文件  │
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  │  model-blind      │ 代理注入   │ i18n 3 文件         │        │ misc 19 文件      │
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  │                   │            │ acp 族 3 文件       │        │                  │
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  └──────────────────┘            └────────────────────┘        └──────────────────┘
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>组</th>
+<th>文件数</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vault 族</td>
+<td>12</td>
+<td>model-blind 浏览器填密保险库 + 登录后端注册表</td>
+</tr>
+<tr>
+<td>secret_sources/ + proxy_sources/ + secret_scope</td>
+<td>10</td>
+<td>启动时把外部密钥管理器解析成环境变量;沙箱出口代理</td>
+</tr>
+<tr>
+<td>i18n 族</td>
+<td>3</td>
+<td>分层 locale 目录(插件包 &gt; 用户覆盖 &gt; 内置)</td>
+</tr>
+<tr>
+<td>lsp/</td>
+<td>14</td>
+<td>真语言服务器的写后诊断(门控于 git workspace)</td>
+</tr>
+<tr>
+<td>pet/</td>
+<td>11</td>
+<td>Petdex 桌宠引擎(CLI/TUI/桌面共享核心,纯显示层)</td>
+</tr>
+<tr>
+<td>monitoring/</td>
+<td>9</td>
+<td>网关健康与脱敏诊断的 fire-and-forget OTLP 出口</td>
+</tr>
+<tr>
+<td>verify 族</td>
+<td>7</td>
+<td>被动验证证据台账 + turn 结束验证闸</td>
+</tr>
+<tr>
+<td>杂项</td>
+<td>19</td>
+<td>脱敏、轨迹、标题生成、webhook、ACP、看门狗补丁等</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_2">关键代码走读<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="1-vault-model-blind">1. vault 族(深讲):model-blind 的凭据保险库<a class="headerlink" href="#1-vault-model-blind" title="Permanent link">&para;</a></h3>
+<p>浏览器自动填密需要"知道密码"——但模型<strong>永远</strong>不该看到密码。<code>vault_store.py</code> 的设计把这件事
+做成结构性保证:元数据(类型/标签/来源)与加密载荷同住,model 只见不透明句柄;明文只在浏览器
+填充路径上服务端解析,不进工具结果、日志或会话库:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># agent/vault_store.py:1-18(docstring 节选)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="sd">"""Local encrypted vault for browser autofill secrets.</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="sd">Profile-scoped, model-blind credential store. Metadata (kind, label, origin,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="sd">timestamps) lives alongside an encrypted secret payload; the payload is</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="sd">encrypted at rest with a locally generated Fernet key. The model only ever</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="sd">sees opaque handles + metadata — secret values are resolved server-side by</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="sd">the browser fill path and never enter tool results, logs, or the session DB.</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="sd">...</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="sd">- Three item kinds: ``login`` (password-only secret), ``payment`` (card fields) and</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="sd">  ``address``; ``PAYMENT_FIELDS`` / ``ADDRESS_FIELDS`` are the canonical payload names."""</span>
+</code></pre></div>
+<p>存储是 profile 作用域的:<code>&lt;HERMES_HOME&gt;/vault/</code> 下 0600 的密钥文件 + 密文文件,跨进程用 fcntl/
+msvcrt 文件锁;<code>vault.key_storage: keychain</code>(opt-in)把密钥搬进 OS 凭据库(<code>vault_keychain.py</code>,
+经 <code>keyring</code> 包),home 只剩非密钥指针 <code>vault.keyref</code>——备份与同步目录从此只有密文。<code>VaultStore</code>
+的方法面覆盖 add/list/remove、TOTP(<code>normalize_otp_secret</code> 接受 otpauth:// URI 并保留非默认的
+位数/周期/算法)、以及密钥迁移(<code>migrate_key</code>,file↔keychain 双向)。每种载荷字段都钉死到
+WHATWG autocomplete token(<code>PAYMENT_FIELDS</code>/<code>ADDRESS_FIELDS</code>),填表端不用猜用户的字段命名。</p>
+<p>登录<strong>后端</strong>是注册表模式的又一次复用,但契约相反:后端只列<strong>元数据</strong>、按句柄解析<strong>一个</strong>密码。
+外部管理器(1Password/Bitwarden)需要会话解锁,锁定时 <code>resolve_password</code> 抛 <code>UnlockRequired</code> 让
+surface 去提示;句柄用 <code>prefix</code> 命名空间化,<code>backend_for_handle</code> 不需要查表:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># agent/vault_backends/base.py:47-56</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="nd">@abstractmethod</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">list_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">VaultItemMeta</span><span class="p">]:</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="sd">"""Metadata only. Locked external backends return [] (the agent sees a lock hint instead)."""</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="nd">@abstractmethod</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">VaultItemMeta</span><span class="p">]:</span> <span class="o">...</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="nd">@abstractmethod</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="sd">"""Server-side only; raises ``UnlockRequired`` when locked."""</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_otp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="sd">"""Current one-time code for a login that stores a TOTP seed, else None (the user is asked).</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="sd">        Server-side only, like resolve_password."""</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div>
+<p>四个内建后端:<code>local</code>(Fernet vault,恒可用)、<code>onepassword</code>/<code>bitwarden</code>(CLI 子进程,会话令牌
+<code>OP_SESSION_*</code>/<code>BW_SESSION</code> 只存进程内存的闭包里、空闲 TTL 到期即弃,永不写 env/磁盘——
+<code>vault_backends/unlock.py</code>)、<code>browser</code>(真实浏览器 profile 的已存密码,<strong>只读</strong>:list 只读快照
+<code>Login Data</code> 的明文列,resolution 让浏览器自己在原 origin 上解密、Hermes 经 CDP 读回——没有
+解密代码,复用 <code>browser.use_real_profile</code> 的既有同意)。解锁提示由 surface 拥有
+(<code>set_unlock_prompt_callback</code>);无头上下文(cron/webhook/单查询)不装回调、保险库保持锁定——
+和审批无人应答时的姿态一致。</p>
+<p>插件后端走 <code>vault_backend_registry.py</code> 注册(<code>ctx.register_login_backend</code>),拒绝规则是全仓库最
+严的静态审查之一——因为注册时要读 <code>provider.name</code>,属性钩子会在守卫外跑插件代码:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># agent/vault_backend_registry.py:45-60(节选)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">static_name</span><span class="p">(</span><span class="n">provider</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="sd">"""The backend's name, judged without running plugin code (``ValueError`` with a fixed message when refused).</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="sd">    Registration reads ``provider.name``; a property, a ``__getattribute__`` hook or a ``__class__`` override</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="sd">    would run the plugin's code there, outside any guard, and its exception text would reach the loader log."""</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">provider</span><span class="p">)</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">LoginBackend</span><span class="p">):</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"login backend must subclass LoginBackend"</span><span class="p">)</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__getattribute__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="s2">"__class__"</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"login backend must not override attribute access"</span><span class="p">)</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">name</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getattr_static</span><span class="p">(</span><span class="n">provider</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getattr_static</span><span class="p">(</span><span class="n">provider</span><span class="p">,</span> <span class="s2">"prefix"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"login backend name and prefix must be plain string attributes"</span><span class="p">)</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="n">error</span> <span class="o">=</span> <span class="n">_namespace_error</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">""</span> <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">:"</span> <span class="k">else</span> <span class="s2">"login backend prefix must be '&lt;name&gt;:'"</span><span class="p">)</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    <span class="k">return</span> <span class="n">name</span>
+</code></pre></div>
+<p>插件后端最终只能以 <code>vault_backends/plugin.py</code> 的 <code>PluginLoginBackend</code> 包装形态到达 vault 工具:
+命名空间取注册键(永不读插件可变属性)、只发句柄不给页面/CDP/主密码、<code>needs_unlock</code> 恒 False、
+<strong>异常替换为固定文本</strong>在 except 之外抛出(插件错误文本里的机密到不了任何工具结果/日志/异常链)、
+返回值在守卫内校验并拷贝成 core 对象(读插件对象的属性字段也可能跑插件代码)。填密的目标控件由
+<code>vault_login_classifier.py</code> 选——OpenInstinct 内核分类器的 Python 移植(~170 行):autocomplete
+token 精确匹配 100 分、type=password 90、<code>new-password</code>/<code>one-time-code</code> 与"确认新密码"文案硬
+排除。</p>
+<h3 id="2-secret_sources-proxy_sources-secret_scope">2. 密钥来源链:secret_sources/ + proxy_sources/ + secret_scope<a class="headerlink" href="#2-secret_sources-proxy_sources-secret_scope" title="Permanent link">&para;</a></h3>
+<p><code>secret_sources/</code> 解决"API key 不想躺在 .env 里":启动时(<code>.env</code> 加载后、其余 Hermes 读
+<code>os.environ</code> 前)把外部密钥管理器解析成环境变量形状的值。契约刻意窄——<strong>只读、启动期、同步、
+每 fetch 一次</strong>(注册表强制墙钟超时)、永不抛、永不交互提示(错误进 <code>FetchResult.error</code> 带
+<code>ErrorKind</code>);<code>SECRET_SOURCE_API_VERSION</code> 门控插件兼容。三个内建后端:<code>bitwarden</code>(Bitwarden
+<strong>Secrets Manager</strong> <code>bws</code>,PM 工具库自动装固定版本、SHA-256 校验;唯一 bootstrap 密钥是 .env
+里的 access token)、<code>onepassword</code>(<code>op://vault/item/field</code> 引用逐个 <code>op read</code>,Hermes 永不代替
+用户认证)、<code>command</code>(用户自己的 helper 走 <code>/bin/sh -c</code>,key 只经 <code>HERMES_SECRET_KEY</code> 传递、
+3s 硬超时 + 1MiB 输出帽、失败只记结构化字段)。<code>registry.apply_all</code> 统一排序("mapped 胜 bulk"、
+先声明先得)、<code>override_existing</code> 语义(可胜 .env/shell,永不胜另一来源、永不胜受保护变量)与
+来源溯源。两半缓存(进程内 + 磁盘)共享在 <code>_cache.py</code>,磁盘半原子写 0600、纯 best-effort——
+缓存问题不许阻塞启动。</p>
+<p><code>proxy_sources/iron_proxy.py</code> 是出口侧的镜像:沙箱(Docker/Modal/SSH)里只有<strong>不透明代理令牌</strong>,
+iron-proxy——TLS 拦截式默认拒绝出口防火墙——在出去的路上把令牌换成真凭据,泄露的令牌在可信
+代理边界之外无用;CA、<code>proxy.yaml</code>、mappings、pidfile 都在 <code>&lt;hermes_home&gt;/proxy/</code>,失败只警告、
+绝不阻塞启动。<code>secret_scope.py</code> 是多路网关的另一半:每个 profile 的 <code>.env</code> <strong>不能</strong>并进
+<code>os.environ</code>(A 的密钥会漏进 B 的 turn 和子进程),<code>set_secret_scope</code> 以 ContextVar 装载活跃
+profile 的密钥(经 <code>copy_context()</code> 传进 worker 线程),多路激活而作用域未设时 <code>get_secret</code>
+<strong>直接抛</strong>而非回落——与 <code>web_search_provider.get_provider_env</code> 的防线互为表里。</p>
+<h3 id="3-i18n">3. i18n 族:三层目录、每层可残缺<a class="headerlink" href="#3-i18n" title="Permanent link">&para;</a></h3>
+<p><code>i18n.py</code> 用扁平点号键解析五层目录(插件语言包 → 用户覆盖 <code>$HERMES_HOME/locales/&lt;lang&gt;.yaml</code> →
+内置 <code>locales/&lt;lang&gt;.yaml</code> → 同链的 <code>en</code> → 裸键);<code>t()</code> 是热路径,每 <code>(home, lang)</code> 缓存一份
+合并字典,包注册时失效。语言解析序:显式 <code>lang=</code> &gt; <code>HERMES_LANGUAGE</code> &gt; <code>display.language</code> &gt;
+<code>en</code>;任何有层供给的 id 都接受,所以纯包语言(<code>pl</code>)在插件加载瞬间即可用。<code>i18n_layers.py</code> 拥有
+插件包与用户覆盖两层,且包是<strong>多表面</strong>的(<code>&lt;lang&gt;.yaml</code> 给 core、<code>&lt;lang&gt;.tui.yaml</code>/
+<code>&lt;lang&gt;.desktop.yaml</code> 对 Python 不透明、经 <code>i18n.catalog</code> 供渲染器);<code>i18n_languages.py</code> 是
+内置 locale 的表(endonym + RTL 方向),与桌面 TS 侧的 <code>LOCALE_ENDONYMS</code> 必须一致(有测试钉住)。</p>
+<h3 id="4-lsp">4. lsp/ 集成(深讲):写后诊断的完整管线<a class="headerlink" href="#4-lsp" title="Permanent link">&para;</a></h3>
+<p>LSP 让 pyright/gopls 等真语言服务器成为写后校验器。门控是第一条原则——<strong>LSP 只在 git
+workspace 里跑</strong>(<code>lsp/workspace.py</code>),Telegram 网关里 home 目录的聊天永不孵化守护进程;
+<code>lsp/__init__.py</code> 的 <code>get_service()</code> 返回单例或 None。服务层(<code>lsp/manager.py</code>)桥接同步的
+file_operations 层与异步客户端:一个后台线程里的 asyncio 循环,每 <code>(server_id, workspace_root)</code>
+一个惰性客户端,pyright 这类 multi_root 服务器只有一个客户端、更多根经
+<code>didChangeWorkspaceFolders</code> 挂上去:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># agent/lsp/manager.py:1-12(docstring 节选)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="sd">"""Service-level orchestration for LSP clients.</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="sd">:class:`LSPService` bridges the synchronous file_operations layer and the async</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="sd">:class:`agent.lsp.client.LSPClient`: one asyncio loop in a background thread, one lazily</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="sd">spawned client per ``(server_id, workspace_root)`` — servers flagged ``multi_root`` (pyright) get ONE</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="sd">client per ``server_id`` and further roots (typically sibling git worktrees) are attached to the running</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="sd">process via ``workspace/didChangeWorkspaceFolders`` — a **broken-set** of pairs that failed</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="sd">to spawn/initialize (retried only after ``lsp.broken_retry_seconds``; never, by default), and a **delta baseline**</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="sd">per file (``snapshot_baseline()`` runs BEFORE a write; the next ``get_diagnostics_sync()``</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="sd">returns only diagnostics not in it).  Off unless config enables it."""</span>
+</code></pre></div>
+<p>客户端(<code>lsp/client.py</code>)的新鲜度用<strong>文档版本</strong>而非时间戳:每次 didChange bump version,每条
+存储的诊断带着描述它的版本——慢服务器的残留诊断永远不能冒充当前内容的判定("ghost
+diagnostics");<code>ContentModified</code>(-32801)指数退避重试。编辑检查(<code>lsp/edit_check.py</code>)是一次
+协同程上的快检查:同步编辑后快照、等判定;只有判定真有诊断,才对照<strong>编辑前</strong>快照(或复用早前为
+同一文本留下的判定)取"本次编辑引入"的增量。两个快照都是<strong>写入本身持有的字节</strong>,不是事后重读
+文件——排队时另一个会话可能又写了文件,那不是本次编辑的错误。同步诊断(<code>lsp/sync_diagnostics.py</code>)
+先问 typescript-language-server 的 <code>tsserverRequest</code>(<code>syntacticDiagnosticsSync</code>/
+<code>semanticDiagnosticsSync</code>,暖项目 ~10ms),无同步请求或失败再回落 push/pull 等待。</p>
+<p>最精巧的一件是<strong>延迟交付</strong>(<code>lsp/deferred.py</code>):<code>write_file</code>/<code>patch</code> 在字节落盘并验证后立即
+返回,语言服务器判定在 LSP 循环上排队,下一次工具结果(或没有工具再跑时的下一次 user turn)
+带给该会话的 agent——作为一条<strong>尚未 flush 的新行</strong>,不移动任何缓存字节。同一文件的更新编辑接管
+未交付判定(新检查 diff 旧基线,第一笔编辑引入的错误仍然上报,除非第二笔修好了它);turn 的
+最后一次工具调用也没丢判定——<code>track_pending</code> 按会话追踪在跑的检查,turn 最终答案被接受前
+<code>settle_for_agent</code> 有界等待并交出全部未交付判定,<code>agent.turn_stop_gates</code> 把它们作为新消息递给
+模型。配套件:<code>range_shift.py</code> 用 difflib 建 pre→post 行移位图,免得"同一错误挪了行号"被当成
+全新错误;<code>reporter.py</code> 把增量格式化成紧凑的 <code>&lt;diagnostics&gt;</code> 块(默认只 ERROR,每文件 20 条帽);
+<code>eventlog.py</code> 的稳态静默模型(DEBUG 满地跑、INFO 每会话一次、WARNING 才是动作项)让 <code>agent.log</code>
+仍可 grep;<code>install.py</code> 把缺失的服务器二进制装进 Hermes 自有的 <code>&lt;HERMES_HOME&gt;/lsp/bin/</code>(用户的
+全局工具链不动,失败一律返回 None 让工具层退回内建语法检查);<code>servers.py</code> 是每语言 <code>ServerDef</code>
+注册表,<code>cli.py</code> 提供 <code>hermes lsp status/list/install/restart/which</code>。</p>
+<h3 id="5-pet">5. pet/:桌宠是纯显示层<a class="headerlink" href="#5-pet" title="Permanent link">&para;</a></h3>
+<p>Petdex 桌宠引擎的 docstring 开宗明义:<strong>无模型工具、无提示词/工具集改动,零缓存影响</strong>。CLI
+(Python)与 TUI(Ink,经 tui_gateway)共享同一核心:constants(几何 + <code>PetState</code> 行分类,
+8 列 × 9 行 Codex 图集或旧 8 行图集)、state(agent 活动 → 状态行的唯一裁决点,优先序与桌面 TS
+镜像互钉)、store(<code>get_hermes_home()/pets/&lt;slug&gt;/</code> 的安装/枚举,profile 作用域)、render(解
+spritesheet、kitty/iTerm2/sixel/half-block 编码,能力检测在 <code>terminal_image</code>;Pillow 惰性导入,
+缺了降级为空串不抛)、manifest(petdex.dev 公开清单,只读无凭据)、<code>generate/</code>(5 文件:
+atlas/imagegen/orchestrate/prompts,用图像生成后端造新宠)。</p>
+<h3 id="6-monitoring-emitfail-isolated">6. monitoring/:微秒级 emit、fail-isolated 出口<a class="headerlink" href="#6-monitoring-emitfail-isolated" title="Permanent link">&para;</a></h3>
+<p><code>monitoring/emitter.py</code> 是生产者与消费者之间唯一的缝,热路径不变量写得斩钉截铁:<code>emit()</code> 必须
+微秒级返回、必须不阻塞磁盘/网络、<strong>必须永不抛进调用方</strong>——队列满丢最老的;daemon 线程批量分发
+给 fail-isolated 订阅者,什么都不持久化(监控是出站路径,不是存储)。<code>events.py</code> 的类型化事件
+<strong>内容自由</strong>:无提示词、消息、工具参数、会话历史或用量分析——那些属于 NeMo Relay(见
+relay_moa.md)。出站前 <code>redaction.py</code> 一把无条件洗(<code>redact_for_egress</code> <strong>fail-closed</strong>,脱敏器坏
+就不出原文),再 PII 化;<code>otlp_exporter.py</code> 映射到 OTel span(可选 extra,惰性导入,<code>headers_env</code>
+出口时读、永不记录);<code>gateway_health(_export).py</code> 与 <code>cron_health.py</code> 是两个生产者;<code>policy.py</code>
+管可重置的伪匿名安装 id。</p>
+<h3 id="7-verify">7. verify 族:被动台账 + 有界停机闸<a class="headerlink" href="#7-verify" title="Permanent link">&para;</a></h3>
+<p><code>verification_evidence.py</code> 记录 agent 在代码工作区里<strong>实际证明了什么</strong>——刻意被动:不跑测试
+套件、不阻塞完成、不把定点检查升格为"repo 全绿"。<code>verification_stop.py</code> 是唯一动它的闸:
+policy-only,当模型刚编辑完代码、没有新鲜证据就试图收工时,把台账转成一次<strong>有界</strong>的后续追问
+(nudge 里点名改动路径,截断 8 条/1200 字符)。<code>verify_hooks.py</code> 把内建编码指导骑在验证 nudge 上
+而非另立默认停机闸(默认 token 成本与"缺验证证据"的决定绑定,<code>pre_verify</code> 钩子留给用户/插件
+策略);<code>verify/</code> 4 文件是 <code>hermes verify</code> 的运行器——从 grok-cli 移植的静态 run-recipe 检测
+(<code>recipes.py</code>,与 <code>coding_context.detect_project_facts</code> 分层:字节稳定的提示期事实 vs 深度运行
+时配方)、<code>&lt;project&gt;/.hermes/environment.json</code> 清单(用户可编辑、有效即胜过新鲜检测)、
+bootstrap→build→test→后台 start→readiness→teardown 流程。</p>
+<h3 id="8-19">8. 杂项 19 文件:每个都小而硬<a class="headerlink" href="#8-19" title="Permanent link">&para;</a></h3>
+<p><code>redact.py</code>(1,950 行)是全部日志/工具输出脱敏的正则底座(短 token 全遮、长 token 留头 6 尾 4;
+<code>redact_for_egress</code> 是出站强制版,monitoring/MoA 都压在它上);<code>redact_connstr.py</code> 补关键词/值
+连接串(ADO.NET/libpq)的密码遮蔽——URL 形式归 redact.py,<code>.NET</code> 连接串曾原文漏过。
+<code>trace_upload.py</code> 把会话转录以 Claude Code JSONL 形状传 HF(默认私有数据集 + 强制脱敏,永不抛);
+<code>trajectory.py</code> 是轨迹保存 + scratchpad→think 转换的小叶子。<code>title_generator.py</code> 两段式会话
+标题(模型调用前的确定性即时标题 → 一次小模型升级,溯源 <code>derived &lt; llm &lt; user</code>,升级线程用
+WeakSet 登记供退出前 join);<code>notification_presentation.py</code> 把"仅诊断"唤醒的呈现按 turn 静音
+(执行与控件不受影响);<code>reactions.py</code> 正则探测用户对 agent 的 affection(<code>&lt;3</code>、good bot——
+"this is great" 不算),单一事实源喂 CLI 宠物/TUI 红心/桌面红心。<code>outbound_webhooks.py</code> 是
+<code>hooks.outbound</code> 的 fire-and-forget POST(有界队列 + 单 daemon 工人,HMAC-SHA256 签名,目标永远
+影响不了 agent 流);<code>thread_scoped_output.py</code> 用每线程路由代理替换 <code>sys.stdout/stderr</code>
+(<code>contextlib.redirect_stdout</code> 是进程全局的,后台工人静音自己会静音网关事件循环——装一次、
+幂等、永不卸载)。</p>
+<p>kanban 侧两个补丁:<code>kanban_stop.py</code> 是 worker 的 turn 结束闸(没调终端看板工具就叙述收工 →
+有界合成 nudge 续跑,避免 dispatcher 记 protocol violation);<code>kanban_turn_recovery.py</code> 把死于
+可重试失败的 worker turn 原地重试——同会话同历史、有界预算、显式退避,预算耗尽则<strong>非零</strong>退出
+诚实记账。计划面:<code>plan_prompt.py</code> 的 <code>/plan</code> 是无引擎内建(build_plan_prompt 作为普通 turn 喂
+给 agent,系统提示词不动);<code>plan_snapshot_sync.py</code> 用 Nous 回复自带的 usage-window 头比对缓存
+的账户快照,不一致才后台刷新一次。ACP 三件套:<code>acp_client.py</code> 是 <code>external_process</code> 模型
+provider 的通用 stdio 客户端(每请求短命 ACP 会话,一个 prompt 进、文本块出、OpenAI 形状回);
+<code>acp_openai_bridge.py</code> 补 ACP 没有 tools 通道的缺口——Hermes 工具 schema <strong>进 prompt 的文本</strong>、
+调用从响应文本<strong>解析回来</strong>,各客户端只差 allowlist;<code>copilot_acp_client.py</code> 是弃用别名模块(列出
+的目录 ACP provider 钉在旧版,整面保留 + 每进程警告一次)。<code>custom_entry_pool.py</code> 处理
+<code>providers:</code> 条目与内建池同 slug 的凭据归属(条目作用域视图,内建的账号永不顶替条目声明的凭据)。
+<code>empty_response_guard.py</code> 是双保险守卫(均 fail-open):连续两次 usage 在场且 output_tokens==0
+的空响应 → 跳过余下重试直达 fallback 链;单次空尝试的预估输入成本超 $0.25 → 重试预算 3→1。
+<code>battery.py</code> 给 CLI/TUI 状态条读电池(psutil + 几秒 memoize,一律可降级)。</p>
+<hr />
+<h2 id="_3">核心类/函数<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>位置</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VaultStore</code> / <code>VaultItemMeta</code></td>
+<td>agent/vault_store.py:208/169</td>
+<td>Fernet 保险库(CRUD/TOTP/迁移);模型可见元数据</td>
+</tr>
+<tr>
+<td><code>LoginBackend</code>(ABC) / <code>PluginLoginBackend</code></td>
+<td>agent/vault_backends/base.py:29, plugin.py</td>
+<td>后端契约 + UnlockRequired;插件包装(异常固定文本)</td>
+</tr>
+<tr>
+<td><code>static_name</code> / <code>set_unlock_prompt_callback</code></td>
+<td>agent/vault_backend_registry.py:45, unlock.py</td>
+<td>静态名称审查;主密码提示归 surface</td>
+</tr>
+<tr>
+<td><code>SecretSource</code>(ABC) / <code>apply_all</code></td>
+<td>agent/secret_sources/base.py, registry.py</td>
+<td>只读启动期 fetch 契约;超时/优先序/溯源编排</td>
+</tr>
+<tr>
+<td><code>get_secret</code> / <code>set_secret_scope</code></td>
+<td>agent/secret_scope.py</td>
+<td>作用域化密钥读取(multiplex 未绑 scope 即抛)</td>
+</tr>
+<tr>
+<td><code>t</code> / <code>reset_language_cache</code></td>
+<td>agent/i18n.py</td>
+<td>五层目录解析的热路径读取与失效</td>
+</tr>
+<tr>
+<td><code>LSPService</code> / <code>LSPClient</code></td>
+<td>agent/lsp/manager.py, client.py</td>
+<td>同步↔异步桥;版本化新鲜度诊断客户端</td>
+</tr>
+<tr>
+<td><code>run_edit_check</code> / <code>queue_deferred</code> / <code>settle_for_agent</code></td>
+<td>agent/lsp/edit_check.py, deferred.py</td>
+<td>增量判定;延迟交付;turn 收尾有界等待</td>
+</tr>
+<tr>
+<td><code>build_line_shift</code> / <code>reporter</code></td>
+<td>agent/lsp/range_shift.py, reporter.py</td>
+<td>行移位图(增量去噪);<code>&lt;diagnostics&gt;</code> 格式化</td>
+</tr>
+<tr>
+<td><code>emit</code> / <code>redact_for_export</code></td>
+<td>agent/monitoring/emitter.py, redaction.py</td>
+<td>微秒级 fire-and-forget 总线;出站无条件洗</td>
+</tr>
+<tr>
+<td><code>derive_pet_state</code></td>
+<td>agent/pet/state.py</td>
+<td>agent 活动 → 状态行的唯一裁决</td>
+</tr>
+<tr>
+<td><code>record_*</code> 台账族 / <code>last_unattributed_run</code></td>
+<td>agent/verification_evidence.py, verification_stop.py</td>
+<td>被动验证证据;有界停机闸</td>
+</tr>
+<tr>
+<td><code>run_verify</code> / <code>detect_recipe</code></td>
+<td>agent/verify/runner.py, recipes.py</td>
+<td>bootstrap→test→readiness 流程;静态配方</td>
+</tr>
+<tr>
+<td><code>redact_sensitive_text</code> / <code>redact_for_egress</code></td>
+<td>agent/redact.py</td>
+<td>全局脱敏底座 / 出站强制版</td>
+</tr>
+<tr>
+<td><code>mask_connection_strings</code> / <code>build_trace_jsonl</code></td>
+<td>agent/redact_connstr.py, trace_upload.py</td>
+<td>连接串遮蔽;HF trace 上传</td>
+</tr>
+<tr>
+<td>标题生成 / 反应探测</td>
+<td>agent/title_generator.py, reactions.py</td>
+<td>两段式标题(溯源阶梯);vibe 检测</td>
+</tr>
+<tr>
+<td><code>dispatch_outbound_hook</code> / <code>thread_scoped_silence</code></td>
+<td>agent/outbound_webhooks.py, thread_scoped_output.py</td>
+<td>签名 webhook;每线程 stdio 静音</td>
+</tr>
+<tr>
+<td>kanban 闸 / 原地重试</td>
+<td>agent/kanban_stop.py, kanban_turn_recovery.py</td>
+<td>终端看板工具 nudge;死亡 turn 原地恢复</td>
+</tr>
+<tr>
+<td><code>build_plan_prompt</code> / <code>maybe_sync_plan_snapshot</code></td>
+<td>agent/plan_prompt.py, plan_snapshot_sync.py</td>
+<td>/plan 提示词;账户快照后台同步</td>
+</tr>
+<tr>
+<td><code>ACPClient</code> / <code>render_tool_bridge_sections</code></td>
+<td>agent/acp_client.py, acp_openai_bridge.py</td>
+<td>ACP stdio 客户端;工具 schema 进 prompt 的桥</td>
+</tr>
+<tr>
+<td><code>pool_for_custom_entry</code> / 空响应守卫 / <code>read_battery</code></td>
+<td>agent/custom_entry_pool.py, empty_response_guard.py, battery.py</td>
+<td>凭据池视图;确定性空检测;电池读出</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">本组文件清单<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>组</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent/vault_store.py</code></td>
+<td>vault</td>
+<td>Fernet 加密保险库(model-blind)</td>
+</tr>
+<tr>
+<td><code>agent/vault_keychain.py</code></td>
+<td>vault</td>
+<td>OS 凭据库存钥匙(keychain opt-in)</td>
+</tr>
+<tr>
+<td><code>agent/vault_login_classifier.py</code></td>
+<td>vault</td>
+<td>填密目标控件分类器(OpenInstinct 移植)</td>
+</tr>
+<tr>
+<td><code>agent/vault_backend_registry.py</code></td>
+<td>vault</td>
+<td>插件登录后端注册表 + 静态审查</td>
+</tr>
+<tr>
+<td><code>agent/vault_backends/__init__.py</code></td>
+<td>vault</td>
+<td>后端包出口</td>
+</tr>
+<tr>
+<td><code>agent/vault_backends/base.py</code></td>
+<td>vault</td>
+<td><code>LoginBackend</code> 契约 + UnlockRequired</td>
+</tr>
+<tr>
+<td><code>agent/vault_backends/local.py</code></td>
+<td>vault</td>
+<td>内建 Fernet 后端(恒可用)</td>
+</tr>
+<tr>
+<td><code>agent/vault_backends/onepassword.py</code></td>
+<td>vault</td>
+<td>1Password 登录项后端(<code>op</code> CLI)</td>
+</tr>
+<tr>
+<td><code>agent/vault_backends/bitwarden.py</code></td>
+<td>vault</td>
+<td>Bitwarden 密码库后端(<code>bw</code> CLI)</td>
+</tr>
+<tr>
+<td><code>agent/vault_backends/browser.py</code></td>
+<td>vault</td>
+<td>真实浏览器已存密码(只读,CDP 读回)</td>
+</tr>
+<tr>
+<td><code>agent/vault_backends/plugin.py</code></td>
+<td>vault</td>
+<td>插件后端的 core 包装(异常固定文本)</td>
+</tr>
+<tr>
+<td><code>agent/vault_backends/unlock.py</code></td>
+<td>vault</td>
+<td>进程内解锁令牌(闭包持有,TTL)</td>
+</tr>
+<tr>
+<td><code>agent/secret_scope.py</code></td>
+<td>密钥链</td>
+<td>作用域化密钥读取(fail-closed)</td>
+</tr>
+<tr>
+<td><code>agent/secret_sources/__init__.py</code></td>
+<td>密钥链</td>
+<td>来源包出口</td>
+</tr>
+<tr>
+<td><code>agent/secret_sources/base.py</code></td>
+<td>密钥链</td>
+<td><code>SecretSource</code> ABC + FetchResult/ErrorKind</td>
+</tr>
+<tr>
+<td><code>agent/secret_sources/registry.py</code></td>
+<td>密钥链</td>
+<td>注册 + apply_all 编排器</td>
+</tr>
+<tr>
+<td><code>agent/secret_sources/_cache.py</code></td>
+<td>密钥链</td>
+<td>两半缓存(进程内 + 0600 磁盘)</td>
+</tr>
+<tr>
+<td><code>agent/secret_sources/bitwarden.py</code></td>
+<td>密钥链</td>
+<td>BSM <code>bws</code> 启动注入</td>
+</tr>
+<tr>
+<td><code>agent/secret_sources/onepassword.py</code></td>
+<td>密钥链</td>
+<td><code>op read</code> 引用解析</td>
+</tr>
+<tr>
+<td><code>agent/secret_sources/command.py</code></td>
+<td>密钥链</td>
+<td>用户 helper 命令源(硬超时)</td>
+</tr>
+<tr>
+<td><code>agent/proxy_sources/__init__.py</code></td>
+<td>密钥链</td>
+<td>代理来源包出口</td>
+</tr>
+<tr>
+<td><code>agent/proxy_sources/iron_proxy.py</code></td>
+<td>密钥链</td>
+<td>沙箱出口的凭据注入代理</td>
+</tr>
+<tr>
+<td><code>agent/i18n.py</code></td>
+<td>i18n</td>
+<td><code>t()</code> 五层目录解析</td>
+</tr>
+<tr>
+<td><code>agent/i18n_layers.py</code></td>
+<td>i18n</td>
+<td>插件包 + 用户覆盖层</td>
+</tr>
+<tr>
+<td><code>agent/i18n_languages.py</code></td>
+<td>i18n</td>
+<td>内置 locale 表(endonym/RTL)</td>
+</tr>
+<tr>
+<td><code>agent/lsp/__init__.py</code></td>
+<td>lsp</td>
+<td>服务单例 + git workspace 门控</td>
+</tr>
+<tr>
+<td><code>agent/lsp/manager.py</code></td>
+<td>lsp</td>
+<td><code>LSPService</code> 同步↔异步桥</td>
+</tr>
+<tr>
+<td><code>agent/lsp/client.py</code></td>
+<td>lsp</td>
+<td>异步 LSP 客户端(版本化新鲜度)</td>
+</tr>
+<tr>
+<td><code>agent/lsp/protocol.py</code></td>
+<td>lsp</td>
+<td>JSON-RPC 2.0 帧器</td>
+</tr>
+<tr>
+<td><code>agent/lsp/servers.py</code></td>
+<td>lsp</td>
+<td>每语言 <code>ServerDef</code> 注册表</td>
+</tr>
+<tr>
+<td><code>agent/lsp/install.py</code></td>
+<td>lsp</td>
+<td>二进制自动安装(Hermes 自有目录)</td>
+</tr>
+<tr>
+<td><code>agent/lsp/cli.py</code></td>
+<td>lsp</td>
+<td><code>hermes lsp</code> 子命令</td>
+</tr>
+<tr>
+<td><code>agent/lsp/workspace.py</code></td>
+<td>lsp</td>
+<td>workspace 门控/信任/项目根解析</td>
+</tr>
+<tr>
+<td><code>agent/lsp/edit_check.py</code></td>
+<td>lsp</td>
+<td>不持写检查(增量判定)</td>
+</tr>
+<tr>
+<td><code>agent/lsp/deferred.py</code></td>
+<td>lsp</td>
+<td>判定延迟交付 + settle</td>
+</tr>
+<tr>
+<td><code>agent/lsp/range_shift.py</code></td>
+<td>lsp</td>
+<td>行移位图(增量去噪)</td>
+</tr>
+<tr>
+<td><code>agent/lsp/reporter.py</code></td>
+<td>lsp</td>
+<td><code>&lt;diagnostics&gt;</code> 块格式化</td>
+</tr>
+<tr>
+<td><code>agent/lsp/sync_diagnostics.py</code></td>
+<td>lsp</td>
+<td>tsserver 同步诊断直询</td>
+</tr>
+<tr>
+<td><code>agent/lsp/eventlog.py</code></td>
+<td>lsp</td>
+<td>稳态静默的结构化日志</td>
+</tr>
+<tr>
+<td><code>agent/pet/__init__.py</code></td>
+<td>pet</td>
+<td>桌宠引擎包出口</td>
+</tr>
+<tr>
+<td><code>agent/pet/constants.py</code></td>
+<td>pet</td>
+<td>图集几何 + PetState 分类</td>
+</tr>
+<tr>
+<td><code>agent/pet/state.py</code></td>
+<td>pet</td>
+<td>活动 → 状态裁决</td>
+</tr>
+<tr>
+<td><code>agent/pet/store.py</code></td>
+<td>pet</td>
+<td>on-disk 宠物安装/枚举</td>
+</tr>
+<tr>
+<td><code>agent/pet/render.py</code></td>
+<td>pet</td>
+<td>spritesheet 解码 + 终端编码</td>
+</tr>
+<tr>
+<td><code>agent/pet/manifest.py</code></td>
+<td>pet</td>
+<td>petdex 公开清单</td>
+</tr>
+<tr>
+<td><code>agent/pet/generate/__init__.py</code></td>
+<td>pet</td>
+<td>生成流水线出口</td>
+</tr>
+<tr>
+<td><code>agent/pet/generate/atlas.py</code></td>
+<td>pet</td>
+<td>图集组装</td>
+</tr>
+<tr>
+<td><code>agent/pet/generate/imagegen.py</code></td>
+<td>pet</td>
+<td>图像生成调用</td>
+</tr>
+<tr>
+<td><code>agent/pet/generate/orchestrate.py</code></td>
+<td>pet</td>
+<td>生成编排</td>
+</tr>
+<tr>
+<td><code>agent/pet/generate/prompts.py</code></td>
+<td>pet</td>
+<td>生成提示词</td>
+</tr>
+<tr>
+<td><code>agent/monitoring/__init__.py</code></td>
+<td>monitoring</td>
+<td>包出口(<code>emit</code>/<code>get_emitter</code>)</td>
+</tr>
+<tr>
+<td><code>agent/monitoring/emitter.py</code></td>
+<td>monitoring</td>
+<td>fire-and-forget 事件总线</td>
+</tr>
+<tr>
+<td><code>agent/monitoring/events.py</code></td>
+<td>monitoring</td>
+<td>类型化内容自由事件</td>
+</tr>
+<tr>
+<td><code>agent/monitoring/policy.py</code></td>
+<td>monitoring</td>
+<td>伪匿名安装 id</td>
+</tr>
+<tr>
+<td><code>agent/monitoring/redaction.py</code></td>
+<td>monitoring</td>
+<td>出站前无条件洗</td>
+</tr>
+<tr>
+<td><code>agent/monitoring/otlp_exporter.py</code></td>
+<td>monitoring</td>
+<td>OTLP/HTTP 出口(可选 extra)</td>
+</tr>
+<tr>
+<td><code>agent/monitoring/gateway_health.py</code></td>
+<td>monitoring</td>
+<td>网关健康信号生产者</td>
+</tr>
+<tr>
+<td><code>agent/monitoring/gateway_health_export.py</code></td>
+<td>monitoring</td>
+<td>健康导出运行时(fail-open)</td>
+</tr>
+<tr>
+<td><code>agent/monitoring/cron_health.py</code></td>
+<td>monitoring</td>
+<td>cron 服务健康投影</td>
+</tr>
+<tr>
+<td><code>agent/verification_evidence.py</code></td>
+<td>verify</td>
+<td>被动验证证据台账(SQLite)</td>
+</tr>
+<tr>
+<td><code>agent/verification_stop.py</code></td>
+<td>verify</td>
+<td>turn 结束验证闸(policy-only)</td>
+</tr>
+<tr>
+<td><code>agent/verify_hooks.py</code></td>
+<td>verify</td>
+<td>pre_verify 环的 nudge 助手</td>
+</tr>
+<tr>
+<td><code>agent/verify/__init__.py</code></td>
+<td>verify</td>
+<td>verify 包出口</td>
+</tr>
+<tr>
+<td><code>agent/verify/environment.py</code></td>
+<td>verify</td>
+<td>环境清单(.hermes/environment.json)</td>
+</tr>
+<tr>
+<td><code>agent/verify/recipes.py</code></td>
+<td>verify</td>
+<td>静态 run-recipe 检测</td>
+</tr>
+<tr>
+<td><code>agent/verify/runner.py</code></td>
+<td>verify</td>
+<td>bootstrap→test→readiness 运行器</td>
+</tr>
+<tr>
+<td><code>agent/battery.py</code></td>
+<td>杂项</td>
+<td>状态条电池读出</td>
+</tr>
+<tr>
+<td><code>agent/redact.py</code></td>
+<td>杂项</td>
+<td>全局脱敏底座(1,950 行)</td>
+</tr>
+<tr>
+<td><code>agent/redact_connstr.py</code></td>
+<td>杂项</td>
+<td>连接串密码遮蔽</td>
+</tr>
+<tr>
+<td><code>agent/trace_upload.py</code></td>
+<td>杂项</td>
+<td>HF agent trace 上传</td>
+</tr>
+<tr>
+<td><code>agent/trajectory.py</code></td>
+<td>杂项</td>
+<td>轨迹保存 + scratchpad 转换</td>
+</tr>
+<tr>
+<td><code>agent/outbound_webhooks.py</code></td>
+<td>杂项</td>
+<td>签名的 notify-only webhook</td>
+</tr>
+<tr>
+<td><code>agent/reactions.py</code></td>
+<td>杂项</td>
+<td>vibe 反应探测</td>
+</tr>
+<tr>
+<td><code>agent/title_generator.py</code></td>
+<td>杂项</td>
+<td>两段式会话标题</td>
+</tr>
+<tr>
+<td><code>agent/notification_presentation.py</code></td>
+<td>杂项</td>
+<td>诊断唤醒的 turn 级静音</td>
+</tr>
+<tr>
+<td><code>agent/kanban_stop.py</code></td>
+<td>杂项</td>
+<td>worker 终端看板工具闸</td>
+</tr>
+<tr>
+<td><code>agent/kanban_turn_recovery.py</code></td>
+<td>杂项</td>
+<td>worker turn 原地重试</td>
+</tr>
+<tr>
+<td><code>agent/thread_scoped_output.py</code></td>
+<td>杂项</td>
+<td>每线程 stdout/stderr 静音</td>
+</tr>
+<tr>
+<td><code>agent/plan_prompt.py</code></td>
+<td>杂项</td>
+<td>/plan 提示词(无引擎)</td>
+</tr>
+<tr>
+<td><code>agent/plan_snapshot_sync.py</code></td>
+<td>杂项</td>
+<td>账户快照后台同步</td>
+</tr>
+<tr>
+<td><code>agent/acp_client.py</code></td>
+<td>杂项</td>
+<td>通用 ACP stdio 客户端</td>
+</tr>
+<tr>
+<td><code>agent/acp_openai_bridge.py</code></td>
+<td>杂项</td>
+<td>工具 schema 进 prompt 的桥</td>
+</tr>
+<tr>
+<td><code>agent/copilot_acp_client.py</code></td>
+<td>杂项</td>
+<td>弃用别名模块</td>
+</tr>
+<tr>
+<td><code>agent/custom_entry_pool.py</code></td>
+<td>杂项</td>
+<td>自定义条目的凭据池视图</td>
+</tr>
+<tr>
+<td><code>agent/empty_response_guard.py</code></td>
+<td>杂项</td>
+<td>空响应守卫(双保险)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">与其他模块的关系<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>tools/</strong>:<code>browser_vault</code>/<code>browser_exec</code> 是 vault 填密的消费者(浏览器路径上服务端解析密码);
+  <code>write_file</code>/<code>patch</code> 经 <code>FileOperations._check_lint_delta</code> 消费 LSP 诊断;<code>hermes tools</code> 面板画
+  全部 provider 的 <code>is_available</code> 与 vault 后端;<code>tools.code_execution_env</code> 的秘密名策略被
+  <code>session_client_env._travels</code> 复用。</li>
+<li><strong>plugins/</strong>:vault 后端、secret 来源、locale 包、媒体 provider 都经 <code>PluginContext.register_*</code>
+  注册;<code>plugins.isolation: host</code> 是插件隔离的最终边界(vault 的进程内存防线挡意外不挡同进程
+  代码)。</li>
+<li><strong>hermes_state/</strong>:验证证据台账落 SQLite;会话行与活动投影被 <code>notification_presentation</code>、
+  <code>plan_snapshot_sync</code> 等杂项读写。</li>
+<li><strong>gateway/</strong>:monitoring 的全部生产者都来自网关运行状态;bot 链(见 relay_moa.md)与
+  <code>gateway.bot_loop_guard</code> 共享设置;<code>kanban_turn_recovery</code> 服务 cron/kanban 调度器的 worker
+  生命周期。</li>
+<li><strong>hermes_cli/</strong>:<code>hermes vault</code>(add/list/key migrate)、<code>hermes lsp</code>、<code>hermes verify</code> 都是本组
+  文件的 CLI 面;<code>apply_all</code> 由 <code>hermes_cli.env_loader</code> 在启动时调用;<code>copilot_acp_client</code> 的弃用
+  面由插件 compat 契约钉住。</li>
+<li><strong>agent/其余</strong>:<code>secret_scope</code> 支撑 <code>web_search_provider.get_provider_env</code> 与 MoA 隐私过滤;
+  <code>redact</code> 是 monitoring/redaction、MoA、trace_upload 的公共底座;<code>verification_stop</code> 的 nudge
+  由 <code>turn_stop_gates</code> 递给模型;<code>empty_response_guard</code> 挂在 turn 重试路径上。</li>
+<li><strong>apps/desktop</strong>:vault 的 Add 对话框写 <code>PAYMENT_FIELDS</code>/<code>ADDRESS_FIELDS</code> 规范字段名;pet 的 TS
+  镜像(<code>state</code> 优先序)与 i18n 的 endonym 表互有测试钉住。</li>
+</ul>
+<h2 id="_6">总结<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>兜底篇最大的收获是看清"模式复用"的复利:同一个 <code>ProviderRegistry</code> 引擎驱动了媒体 provider、
+vault 登录后端、secret 来源、locale 包——注册、命名空间保留、快照/回滚只有一份实现。而 vault
+族与 LSP 是两个镜像的教学案例:<strong>vault 把"模型不可见"做成结构</strong>(句柄 + 元数据出去、明文只在
+服务端解析路径上存在、插件被剥到只剩句柄、异常固定文本),<strong>LSP 把"不拖慢写路径"做成结构</strong>
+(写即返回、判定排队、下一行交付、turn 收尾有界等待)。杂项堆里反复出现同一条纪律:凡是有
+副作用的旁路(webhook、轨迹上传、标题升级、快照同步)一律 fire-and-forget + 有界 + 永不抛进主
+循环;凡是防御(脱敏、作用域、守卫)一律 fail-closed。这正是 AGENTS.md 里 "no defensive
+clutter" 的反面教材检查法——这里的每一层防御背后都站着一个真实事故或一个明确的威胁模型。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../javascripts/pager.js"></script>
+      
+    
+  </body>
+</html>

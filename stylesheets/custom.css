@@ -1,0 +1,84 @@
+/* ============================================================
+   布局优化：左侧目录贴最左 · 右侧大纲贴最右 · 中间内容自适应拉宽
+   作用范围：桌面宽度（≥76.25em，即侧边栏可见的断点）
+   ============================================================ */
+
+@media screen and (min-width: 76.25em) {
+  /* 解除 mkdocs-material 的版心限制（默认 max-width ≈ 1342px 居中），
+     页眉 / 主体 / 页脚全部铺满视口 */
+  .md-grid {
+    max-width: none;
+  }
+
+  /* 左侧目录贴最左、右侧大纲贴最右：留一点点边距避免贴死像素 */
+  .md-sidebar--primary {
+    padding-left: 0.4rem;
+  }
+  .md-sidebar--secondary {
+    padding-right: 0.4rem;
+  }
+
+  /* 中间内容随视口自适应展开，适当加大左右留白保证可读性 */
+  .md-content__inner {
+    margin-inline: 1.4rem;
+  }
+
+  /* 宽屏下代码块、表格铺开更舒展 */
+  .md-typeset .md-typeset__scrollwrap,
+  .md-typeset pre > code,
+  .md-typeset table:not([class]) {
+    width: 100%;
+  }
+}
+
+/* 侧边栏内部滚动条略窄，避免占位 */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar__scrollwrap::-webkit-scrollbar {
+    width: 4px;
+  }
+}
+
+/* ============================================================
+   文末上一页/下一页卡片按钮（由 javascripts/pager.js 注入）
+   ============================================================ */
+.dsh-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.4rem;
+}
+.dsh-pager__btn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.4rem;
+  color: var(--md-default-fg-color);
+}
+.dsh-pager__btn--next {
+  margin-left: auto;
+  text-align: right;
+}
+.dsh-pager__btn:hover {
+  border-color: var(--md-accent-fg-color);
+  color: var(--md-accent-fg-color);
+}
+.dsh-pager__dir {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--md-default-fg-color--light);
+}
+.dsh-pager__title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dsh-pager__btn--off {
+  opacity: 0.35;
+  pointer-events: none;
+}
